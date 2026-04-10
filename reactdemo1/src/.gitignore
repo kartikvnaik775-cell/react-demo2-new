@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.env
+
+# logs
+npm-debug.log*
+
+# system files
+.DS_Store
+Thumbs.db
+
+# vscode
+.vscode/
+
+# your issue
+.gitconfig
