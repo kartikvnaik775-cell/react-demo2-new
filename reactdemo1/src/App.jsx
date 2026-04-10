@@ -91,7 +91,6 @@ const TIMELINE = [
   { year: "2022", title: "Third Star Awarded",  desc: "Aurum joins a rarefied group of three-star establishments in Asia." },
 ];
 
-/* ─── FAQ DATA (10 questions) ───────────────────────────── */
 const FAQS = [
   {
     icon: "◈",
@@ -155,7 +154,6 @@ const FAQS = [
   },
 ];
 
-// Updated chefs array with 2 chefs
 const CHEFS = [
   {
     name: "Arjun Mehrotra",
@@ -173,6 +171,61 @@ const CHEFS = [
     bio: "Trained in Lyon and Barcelona, Chef Selin transforms seasonal ingredients into architectural dessert experiences that have become Aurum's signature finale.",
     stats: [["10+", "Years"], ["5", "Awards"], ["60+", "Creations"]],
   },
+];
+
+/* ─── AI CHAT SYSTEM PROMPT ──────────────────────────────── */
+const AURUM_SYSTEM_PROMPT = `You are Aurum's virtual concierge — a warm, elegant, and knowledgeable AI assistant for Aurum Fine Dining, Mumbai's three-Michelin-star restaurant. You speak in a refined, gracious tone befitting a luxury establishment, but remain approachable and helpful.
+
+ABOUT AURUM:
+- Located at 12, Napean Sea Road, Malabar Hill, Mumbai 400 006
+- Established 2008 by Chef Arjun Mehrotra
+- Three Michelin Stars (awarded 2022), World's 50 Best Restaurants
+- 120 seats, private dining rooms for up to 40 guests
+- Dress code: smart-elegant (no shorts, sportswear, or flip-flops)
+- Phone: +91 22 4001 9999 | Email: reserve@aurum.in
+- Hours: Mon–Fri 12PM–11PM | Sat 11AM–11:30PM | Sun 11AM–10PM
+
+MENU HIGHLIGHTS:
+- Saffron Lobster Bisque — ₹2,800 (Signature)
+- Wagyu Tenderloin A5 — ₹5,200 (Most Loved)
+- Black Truffle Risotto — ₹1,900 (Vegetarian)
+- Miso Glazed Sea Bass — ₹3,400 (Seasonal)
+- Tasting Menu 7-Course — ₹8,500 (Chef's Table)
+- Dessert Architecture — ₹1,200 (Sweet)
+
+CHEF TEAM:
+- Chef Arjun Mehrotra (Executive Chef & Founder) — 18+ years, trained in Paris, Tokyo, New York
+- Chef Selin Yıldız (Head Pastry Chef) — trained in Lyon and Barcelona
+
+SERVICES:
+- Fine dining à la carte and tasting menus
+- Private events (anniversaries, proposals, corporate)
+- Luxury catering at external venues
+- Chef's Table: 6-seat counter, 9-course menu, Fri & Sat only, book 2 weeks ahead
+- Wine cellar tours (800+ labels, sommelier Vikram Nair)
+
+POLICIES:
+- Reservations: 3–5 days in advance recommended
+- Cancellations: 48 hours notice (72 hours for Chef's Table)
+- Children: 10 years and above welcome
+- Dietary needs: vegetarian, vegan, gluten-free, Jain — all accommodated
+- Gift vouchers: ₹2,500–₹50,000
+
+GUIDELINES:
+- Keep responses concise and elegant — 2–4 sentences for simple queries, slightly more for complex ones
+- Always offer to help with reservations when relevant
+- If asked something outside your knowledge, gracefully suggest calling +91 22 4001 9999
+- Never fabricate specific availability or pricing not listed above
+- Use "we" and "our" naturally as part of the Aurum team`;
+
+/* ─── QUICK SUGGESTION CHIPS ─────────────────────────────── */
+const QUICK_CHIPS = [
+  "Make a reservation",
+  "View our menu",
+  "Chef's Table details",
+  "Wine cellar tour",
+  "Private events",
+  "Dietary needs",
 ];
 
 /* ─── GLOBAL CSS ────────────────────────────────────────── */
@@ -214,7 +267,6 @@ const GLOBAL_CSS = `
 
   .font-display { font-family: 'Playfair Display', Georgia, serif; }
 
-  /* Subtle grain overlay */
   body::after {
     content: '';
     position: fixed; inset: 0; z-index: 9999; pointer-events: none;
@@ -285,6 +337,32 @@ const GLOBAL_CSS = `
     to   { width: 100%; }
   }
 
+  /* Chat widget animations */
+  @keyframes chatSlideUp {
+    from { opacity:0; transform:translateY(24px) scale(0.96); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes chatSlideDown {
+    from { opacity:1; transform:translateY(0) scale(1); }
+    to   { opacity:0; transform:translateY(24px) scale(0.96); }
+  }
+  @keyframes msgFadeUp {
+    from { opacity:0; transform:translateY(10px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes typingPulse {
+    0%,80%,100% { transform:scale(0.6); opacity:0.4; }
+    40%         { transform:scale(1); opacity:1; }
+  }
+  @keyframes chatButtonPulse {
+    0%,100% { box-shadow: 0 8px 32px rgba(42,90,60,0.45); }
+    50%     { box-shadow: 0 8px 44px rgba(42,90,60,0.7), 0 0 0 6px rgba(42,90,60,0.12); }
+  }
+  @keyframes chipFade {
+    from { opacity:0; transform:translateY(6px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
   .anim-fade-up  { animation: fadeUp  0.75s var(--ease) both; }
   .anim-fade-in  { animation: fadeIn  0.5s  var(--ease) both; }
   .anim-scale-in { animation: scaleIn 0.4s  var(--ease) both; }
@@ -315,7 +393,6 @@ const GLOBAL_CSS = `
     background-clip: text; animation: shimmer 5s linear infinite; display: inline-block;
   }
 
-  /* Light glass cards */
   .glass {
     background: var(--bg-card);
     backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -332,7 +409,6 @@ const GLOBAL_CSS = `
   }
   .glass-lift:hover { transform: translateY(-6px); }
 
-  /* Dark glass for dark sections */
   .glass-dark {
     background: rgba(255,255,255,0.06);
     backdrop-filter: blur(20px);
@@ -350,7 +426,6 @@ const GLOBAL_CSS = `
   .img-zoom { transition: transform 0.8s var(--ease), filter 0.5s; }
   .img-zoom-wrap:hover .img-zoom { transform: scale(1.08); filter: brightness(1.05) saturate(1.1); }
 
-  /* Buttons */
   .btn-primary {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 15px 32px; background: ${GRAD.primary};
@@ -443,7 +518,6 @@ const GLOBAL_CSS = `
   .rule { border:none; border-top:1.5px solid rgba(28,26,20,0.08); }
   .rule-light { border:none; border-top:1.5px solid rgba(255,255,255,0.1); }
 
-  /* Cart drawer */
   .cart-drawer {
     position: fixed; top:0; right:0; bottom:0; width: min(440px,100vw);
     background: rgba(250,248,243,0.98); backdrop-filter: blur(32px);
@@ -454,7 +528,6 @@ const GLOBAL_CSS = `
   .cart-drawer.open  { animation: slideInRight 0.4s var(--ease-spring) both; }
   .cart-drawer.close { animation: slideOutRight 0.3s var(--ease) both; }
 
-  /* Order popup */
   .order-popup-bg {
     position:fixed; inset:0; z-index:400; background:rgba(28,26,20,0.85);
     backdrop-filter:blur(20px); display:flex; align-items:center; justify-content:center;
@@ -467,7 +540,6 @@ const GLOBAL_CSS = `
     box-shadow: 0 32px 100px rgba(28,26,20,0.2);
   }
 
-  /* Toast */
   .toast {
     position:fixed; bottom:36px; left:50%; transform:translateX(-50%);
     background:rgba(42,90,60,0.95); backdrop-filter:blur(16px);
@@ -477,7 +549,6 @@ const GLOBAL_CSS = `
     box-shadow: 0 10px 36px rgba(42,90,60,0.35);
   }
 
-  /* Qty controls */
   .qty-btn {
     width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center;
     background:rgba(28,26,20,0.06); border:1.5px solid rgba(28,26,20,0.1);
@@ -485,15 +556,12 @@ const GLOBAL_CSS = `
   }
   .qty-btn:hover { background:rgba(42,90,60,0.12); border-color:rgba(42,90,60,0.3); }
 
-  /* Map embed */
   .map-container { border-radius:20px; overflow:hidden; border:1.5px solid rgba(28,26,20,0.08); box-shadow: 0 8px 40px rgba(28,26,20,0.08); }
 
-  /* Responsive grids */
   .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
   .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
   .grid-auto { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
 
-  /* ── FAQ ACCORDION STYLES ── */
   .faq-card {
     border-radius: 20px;
     border: 1.5px solid rgba(90,80,60,0.12);
@@ -579,7 +647,6 @@ const GLOBAL_CSS = `
   }
   .faq-chevron.open { transform: rotate(180deg); }
 
-  /* Answer panel — height animated via JS with CSS transition */
   .faq-answer-panel {
     overflow: hidden;
     transition:
@@ -612,7 +679,6 @@ const GLOBAL_CSS = `
     transition: opacity 0.3s;
   }
 
-  /* Progress indicator strip */
   .faq-progress-strip {
     height: 2px;
     background: linear-gradient(90deg, ${T.green}, ${T.gold});
@@ -621,7 +687,6 @@ const GLOBAL_CSS = `
     transform-origin: left;
   }
 
-  /* Help stats bar */
   .help-stat-card {
     padding: 32px 28px; border-radius: 18px; text-align: center;
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
@@ -631,9 +696,151 @@ const GLOBAL_CSS = `
     box-shadow: 0 14px 44px rgba(28,26,20,0.1);
   }
 
-  @media (max-width:1024px) {
-    .grid-3 { grid-template-columns:repeat(2,1fr); }
+  /* ── CHAT WIDGET ── */
+  .chat-fab {
+    position: fixed; bottom: 32px; right: 32px; z-index: 600;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: ${GRAD.primary};
+    color: #FAF8F3; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 32px rgba(42,90,60,0.45);
+    transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
+    animation: chatButtonPulse 3s ease-in-out infinite;
   }
+  .chat-fab:hover { transform: scale(1.1); box-shadow: 0 12px 44px rgba(42,90,60,0.6); animation: none; }
+  .chat-fab:active { transform: scale(0.96); }
+
+  .chat-window {
+    position: fixed; bottom: 108px; right: 32px; z-index: 600;
+    width: min(400px, calc(100vw - 40px));
+    height: min(580px, calc(100vh - 140px));
+    background: rgba(250,248,243,0.98);
+    backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
+    border: 1.5px solid rgba(42,90,60,0.18);
+    border-radius: 24px;
+    box-shadow: 0 24px 80px rgba(28,26,20,0.18), 0 0 0 1px rgba(255,255,255,0.6) inset;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .chat-window.open  { animation: chatSlideUp 0.42s var(--ease-spring) both; }
+  .chat-window.close { animation: chatSlideDown 0.28s var(--ease) both; }
+
+  .chat-header {
+    background: ${GRAD.primary};
+    padding: 18px 20px; display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+    position: relative; overflow: hidden;
+  }
+  .chat-header::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .chat-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 18px 16px;
+    display: flex; flex-direction: column; gap: 14px;
+    scroll-behavior: smooth;
+  }
+  .chat-messages::-webkit-scrollbar { width: 3px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: rgba(42,90,60,0.2); border-radius: 2px; }
+
+  .chat-msg {
+    max-width: 82%; animation: msgFadeUp 0.3s var(--ease) both;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .chat-msg.user { align-self: flex-end; align-items: flex-end; }
+  .chat-msg.assistant { align-self: flex-start; align-items: flex-start; }
+
+  .chat-bubble {
+    padding: 11px 15px; border-radius: 18px; font-size: 0.875rem; line-height: 1.65;
+  }
+  .chat-bubble.user {
+    background: ${GRAD.primary};
+    color: #FAF8F3; border-radius: 18px 18px 4px 18px;
+  }
+  .chat-bubble.assistant {
+    background: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(42,90,60,0.1);
+    color: ${T.text}; border-radius: 18px 18px 18px 4px;
+  }
+
+  .chat-time {
+    font-size: 0.62rem; color: ${T.textMuted};
+    letter-spacing: 0.04em;
+  }
+
+  .typing-indicator {
+    display: flex; gap: 5px; padding: 12px 15px;
+    background: rgba(255,255,255,0.85);
+    border: 1.5px solid rgba(42,90,60,0.1);
+    border-radius: 18px 18px 18px 4px;
+    align-items: center; width: fit-content;
+  }
+  .typing-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: ${T.green};
+    animation: typingPulse 1.4s ease-in-out infinite;
+  }
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  .chat-chips {
+    display: flex; flex-wrap: wrap; gap: 7px; padding: 10px 16px;
+    border-top: 1px solid rgba(42,90,60,0.08); flex-shrink: 0;
+  }
+  .chat-chip {
+    font-size: 0.7rem; font-weight: 500; letter-spacing: 0.04em;
+    padding: 6px 13px; border-radius: 20px;
+    background: rgba(42,90,60,0.07); border: 1px solid rgba(42,90,60,0.15);
+    color: ${T.green}; cursor: pointer; transition: all 0.2s;
+    animation: chipFade 0.3s var(--ease) both;
+  }
+  .chat-chip:hover { background: rgba(42,90,60,0.14); border-color: rgba(42,90,60,0.3); transform: translateY(-1px); }
+
+  .chat-input-row {
+    display: flex; gap: 9px; padding: 12px 14px;
+    border-top: 1.5px solid rgba(42,90,60,0.1); flex-shrink: 0;
+    background: rgba(255,255,255,0.5);
+  }
+  .chat-input {
+    flex: 1; padding: 10px 14px; font-size: 0.865rem; color: ${T.text};
+    border: 1.5px solid rgba(28,26,20,0.12); border-radius: 12px;
+    background: rgba(255,255,255,0.8); outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: none; max-height: 90px; overflow-y: auto;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  .chat-input::placeholder { color: ${T.textMuted}; }
+  .chat-input:focus { border-color: ${T.green}; box-shadow: 0 0 0 3px rgba(42,90,60,0.1); }
+
+  .chat-send {
+    width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+    background: ${GRAD.primary}; color: #FAF8F3;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s var(--ease-spring); align-self: flex-end;
+    box-shadow: 0 3px 12px rgba(42,90,60,0.3);
+  }
+  .chat-send:hover { transform: scale(1.08); box-shadow: 0 5px 18px rgba(42,90,60,0.45); }
+  .chat-send:disabled { opacity: 0.45; transform: none; cursor: not-allowed; }
+
+  .chat-unread {
+    position: absolute; top: -4px; right: -4px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: ${T.gold}; color: #1C1A14; font-size: 0.6rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid ${T.bg};
+    animation: scaleIn 0.3s var(--ease-spring) both;
+  }
+
+  @media (max-width:1024px) { .grid-3 { grid-template-columns:repeat(2,1fr); } }
   @media (max-width:768px) {
     .section    { padding:80px 0; }
     .section-sm { padding:56px 0; }
@@ -650,6 +857,8 @@ const GLOBAL_CSS = `
     .faq-answer-inner::before { left: 34px; }
     .faq-divider { margin: 0 20px 0 68px; }
     .faq-trigger { padding: 22px 20px; gap: 14px; }
+    .chat-fab { bottom: 20px; right: 20px; }
+    .chat-window { bottom: 94px; right: 20px; }
   }
   @media (max-width:480px) {
     .grid-auto { grid-template-columns:1fr; }
@@ -657,20 +866,20 @@ const GLOBAL_CSS = `
     .faq-answer-inner { padding: 0 16px 20px 16px; }
     .faq-answer-inner::before { display: none; }
     .faq-divider { margin: 0 16px; }
+    .chat-window { width: calc(100vw - 32px); right: 16px; }
   }
 `;
 
 function GlobalStyle() {
   useEffect(() => {
     const id = "aurum-v4-css";
-    if (!document.getElementById(id)) {
+    const el = document.getElementById(id) || (() => {
       const s = document.createElement("style");
-      s.id = id; s.textContent = GLOBAL_CSS;
+      s.id = id;
       document.head.appendChild(s);
-    }
-    // Re-inject on changes (dev)
-    const el = document.getElementById(id);
-    if (el) el.textContent = GLOBAL_CSS;
+      return s;
+    })();
+    el.textContent = GLOBAL_CSS;
   }, []);
   return null;
 }
@@ -688,19 +897,14 @@ function LiveBackground() {
     let H = canvas.height = window.innerHeight;
 
     const orbs = Array.from({ length: 6 }, (_, i) => ({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.2,
+      x: Math.random() * W, y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.2,
       r: 200 + Math.random() * 300,
       hue: i % 2 === 0 ? "rgba(42,90,60," : "rgba(184,134,11,",
       alpha: 0.04 + Math.random() * 0.05,
     }));
 
-    const resize = () => {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-    };
+    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; };
     window.addEventListener("resize", resize);
 
     const draw = () => {
@@ -711,7 +915,6 @@ function LiveBackground() {
         if (o.x > W + o.r) o.x = -o.r;
         if (o.y < -o.r) o.y = H + o.r;
         if (o.y > H + o.r) o.y = -o.r;
-
         const grad = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, o.r);
         grad.addColorStop(0, o.hue + o.alpha + ")");
         grad.addColorStop(1, o.hue + "0)");
@@ -723,34 +926,21 @@ function LiveBackground() {
       animRef.current = requestAnimationFrame(draw);
     };
     draw();
-    return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener("resize", resize);
-    };
+    return () => { cancelAnimationFrame(animRef.current); window.removeEventListener("resize", resize); };
   }, []);
 
-  return (
-    <canvas ref={canvasRef} style={{
-      position: "fixed", inset: 0, width: "100%", height: "100%",
-      pointerEvents: "none", zIndex: 0, opacity: 1,
-    }} />
-  );
+  return <canvas ref={canvasRef} style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0 }} />;
 }
 
 /* ─── FLOATING WARM PARTICLES ────────────────────────────── */
 function FloatingParticles({ count = 20, dark = false }) {
   const particles = useRef(
     Array.from({ length: count }, (_, i) => ({
-      id: i,
-      left: Math.random() * 100,
-      size: Math.random() * 4 + 2,
-      duration: Math.random() * 20 + 14,
-      delay: Math.random() * 18,
-      drift: (Math.random() - 0.5) * 140,
-      spin: Math.random() * 360,
+      id: i, left: Math.random() * 100, size: Math.random() * 4 + 2,
+      duration: Math.random() * 20 + 14, delay: Math.random() * 18,
+      drift: (Math.random() - 0.5) * 140, spin: Math.random() * 360,
       color: Math.random() > 0.5 ? (dark ? T.goldLight : T.green) : (dark ? "rgba(255,255,255,0.4)" : T.gold),
-      opacity: Math.random() * 0.45 + 0.15,
-      shape: Math.random() > 0.5 ? "50%" : "2px",
+      opacity: Math.random() * 0.45 + 0.15, shape: Math.random() > 0.5 ? "50%" : "2px",
     }))
   ).current;
 
@@ -758,17 +948,10 @@ function FloatingParticles({ count = 20, dark = false }) {
     <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 0 }}>
       {particles.map(p => (
         <div key={p.id} style={{
-          position: "absolute",
-          left: `${p.left}%`,
-          bottom: -10,
-          width: p.size,
-          height: p.size,
-          borderRadius: p.shape,
-          background: p.color,
-          boxShadow: `0 0 ${p.size * 2}px ${p.color}`,
-          opacity: p.opacity,
-          "--drift": `${p.drift}px`,
-          "--spin": `${p.spin}deg`,
+          position: "absolute", left: `${p.left}%`, bottom: -10,
+          width: p.size, height: p.size, borderRadius: p.shape, background: p.color,
+          boxShadow: `0 0 ${p.size * 2}px ${p.color}`, opacity: p.opacity,
+          "--drift": `${p.drift}px`, "--spin": `${p.spin}deg`,
           animation: `warmDrift ${p.duration}s ${p.delay}s linear infinite`,
         }} />
       ))}
@@ -800,19 +983,16 @@ function SparkleField({ count = 16, dark = false }) {
   );
 }
 
-/* ─── AMBIENT ORB ────────────────────────────────────────── */
 function AmbientOrb({ x = "10%", y = "20%", size = 600, color = T.green, opacity = 0.07 }) {
   return (
     <div style={{
       position: "absolute", left: x, top: y, width: size, height: size,
       borderRadius: "50%", background: color, filter: "blur(130px)",
-      opacity, pointerEvents: "none", zIndex: 0,
-      animation: "orbFloat 18s ease-in-out infinite",
+      opacity, pointerEvents: "none", zIndex: 0, animation: "orbFloat 18s ease-in-out infinite",
     }} />
   );
 }
 
-/* ─── SECTION HEADER ────────────────────────────────────── */
 function SectionHeader({ eyebrow, title, subtitle, center = false, dark = false }) {
   return (
     <div style={{ textAlign: center ? "center" : "left", marginBottom: 64 }}>
@@ -820,18 +1000,14 @@ function SectionHeader({ eyebrow, title, subtitle, center = false, dark = false 
       <h2 className="font-display" style={{
         fontSize: "clamp(2.2rem,4.5vw,3.2rem)", fontWeight: 600, lineHeight: 1.15,
         color: dark ? T.textLight : T.text, marginBottom: subtitle ? 20 : 0,
-      }}>
-        {title}
-      </h2>
+      }}>{title}</h2>
       {subtitle && (
         <p style={{
           fontSize: "1.05rem", color: dark ? "rgba(250,248,243,0.65)" : T.textDim,
           lineHeight: 1.8, maxWidth: center ? 580 : "100%",
           margin: center ? "0 auto" : 0, fontWeight: 300,
           fontFamily: "'Playfair Display', serif",
-        }}>
-          {subtitle}
-        </p>
+        }}>{subtitle}</p>
       )}
     </div>
   );
@@ -861,20 +1037,13 @@ function useCart() {
   }, [showToast]);
 
   const updateQty = useCallback((id, delta) => {
-    setItems(prev => {
-      const updated = prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i);
-      return updated.filter(i => i.qty > 0);
-    });
+    setItems(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(0, i.qty + delta) } : i).filter(i => i.qty > 0));
   }, []);
 
-  const removeItem = useCallback((id) => {
-    setItems(prev => prev.filter(i => i.id !== id));
-  }, []);
+  const removeItem = useCallback((id) => setItems(prev => prev.filter(i => i.id !== id)), []);
 
   const placeOrder = useCallback(() => {
-    setItems([]);
-    setCartOpen(false);
-    setOrderPlaced(true);
+    setItems([]); setCartOpen(false); setOrderPlaced(true);
     setTimeout(() => setOrderPlaced(false), 3500);
   }, []);
 
@@ -882,6 +1051,243 @@ function useCart() {
   const totalPrice = items.reduce((s, i) => s + i.qty * i.price, 0);
 
   return { items, cartOpen, setCartOpen, addToCart, updateQty, removeItem, placeOrder, totalCount, totalPrice, orderPlaced, toast, cartBounceKey };
+}
+
+/* ─── AI CHAT WIDGET ─────────────────────────────────────── */
+function AIChatWidget({ setActivePage }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content: "Welcome to Aurum ✦ I'm your personal concierge. How may I assist you today — reservations, menu enquiries, or something else?",
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [unread, setUnread] = useState(0);
+  const [showChips, setShowChips] = useState(true);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+  useEffect(() => {
+    if (isOpen) scrollToBottom();
+  }, [messages, isTyping, isOpen]);
+
+  const openChat = () => {
+    setIsOpen(true);
+    setIsClosing(false);
+    setUnread(0);
+    setTimeout(() => inputRef.current?.focus(), 400);
+  };
+
+  const closeChat = () => {
+    setIsClosing(true);
+    setTimeout(() => { setIsOpen(false); setIsClosing(false); }, 280);
+  };
+
+  const getTime = () => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const sendMessage = useCallback(async (text) => {
+    const trimmed = (text || input).trim();
+    if (!trimmed || isTyping) return;
+
+    setShowChips(false);
+    setInput("");
+
+    const userMsg = { role: "user", content: trimmed, time: getTime() };
+    setMessages(prev => [...prev, userMsg]);
+    setIsTyping(true);
+
+    // Build conversation history for API (exclude time field)
+    const history = [...messages, userMsg].map(m => ({ role: m.role, content: m.content }));
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          system: AURUM_SYSTEM_PROMPT,
+          messages: history,
+        }),
+      });
+
+      const data = await response.json();
+      const reply = data.content?.map(b => b.text || "").join("") || "I apologise — something went wrong. Please call us at +91 22 4001 9999.";
+
+      setMessages(prev => [...prev, { role: "assistant", content: reply, time: getTime() }]);
+      if (!isOpen) setUnread(u => u + 1);
+
+      // If user asks to reserve or contact, offer to navigate
+      const lower = trimmed.toLowerCase();
+      if (lower.includes("reserv") || lower.includes("book") || lower.includes("contact")) {
+        setTimeout(() => {
+          setMessages(prev => [...prev, {
+            role: "assistant",
+            content: "Would you like me to take you to our reservations page? 📋",
+            time: getTime(),
+            action: { label: "Go to Reservations", page: "Contact" },
+          }]);
+        }, 1200);
+      }
+    } catch {
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: "I'm having trouble connecting right now. Please reach us directly at +91 22 4001 9999 or reserve@aurum.in.",
+        time: getTime(),
+      }]);
+    } finally {
+      setIsTyping(false);
+    }
+  }, [input, messages, isTyping, isOpen]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  };
+
+  return (
+    <>
+      {/* Floating action button */}
+      <div style={{ position: "fixed", bottom: 32, right: 32, zIndex: 600 }}>
+        {!isOpen && unread > 0 && <span className="chat-unread">{unread}</span>}
+        <button
+          className="chat-fab"
+          onClick={isOpen ? closeChat : openChat}
+          title={isOpen ? "Close chat" : "Chat with Aurum Concierge"}
+          style={{ animation: isOpen ? "none" : "chatButtonPulse 3s ease-in-out infinite" }}
+        >
+          {isOpen ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          ) : (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+          )}
+        </button>
+
+        {/* Tooltip on first load */}
+        {!isOpen && unread === 0 && (
+          <div style={{
+            position: "absolute", bottom: "calc(100% + 12px)", right: 0,
+            background: GRAD.primary, color: "#FAF8F3",
+            fontSize: "0.72rem", fontWeight: 500, whiteSpace: "nowrap",
+            padding: "8px 14px", borderRadius: 10,
+            boxShadow: "0 6px 24px rgba(42,90,60,0.35)",
+            animation: "fadeIn 0.4s 1.5s both",
+            pointerEvents: "none",
+          }}>
+            ✦ Chat with our concierge
+            <div style={{
+              position: "absolute", bottom: -5, right: 18, width: 10, height: 10,
+              background: T.green, transform: "rotate(45deg)", borderRadius: 2,
+            }}/>
+          </div>
+        )}
+      </div>
+
+      {/* Chat window */}
+      {(isOpen || isClosing) && (
+        <div className={`chat-window ${isClosing ? "close" : "open"}`}>
+
+          {/* Header */}
+          <div className="chat-header">
+            <div className="chat-avatar">✦</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", fontWeight: 600, color: "#FAF8F3", lineHeight: 1.2 }}>Aurum Concierge</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 3 }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 6px #4ade80", display: "inline-block" }}/>
+                <p style={{ fontSize: "0.68rem", color: "rgba(250,248,243,0.75)", letterSpacing: "0.06em" }}>Online · Powered by AI</p>
+              </div>
+            </div>
+            <button onClick={closeChat} style={{ width: 32, height: 32, borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.12)", color: "rgba(250,248,243,0.8)", transition: "all 0.2s", flexShrink: 0 }}
+              onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.22)"}
+              onMouseLeave={e => e.currentTarget.style.background = "rgba(255,255,255,0.12)"}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          {/* Messages */}
+          <div className="chat-messages">
+            {messages.map((msg, i) => (
+              <div key={i} className={`chat-msg ${msg.role}`} style={{ animationDelay: `${i * 0.04}s` }}>
+                <div className={`chat-bubble ${msg.role}`}>{msg.content}</div>
+                {msg.action && (
+                  <button
+                    onClick={() => { setActivePage(msg.action.page); closeChat(); }}
+                    style={{
+                      marginTop: 6, padding: "8px 16px", borderRadius: 10, fontSize: "0.72rem",
+                      fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase",
+                      background: "rgba(42,90,60,0.1)", border: "1.5px solid rgba(42,90,60,0.25)",
+                      color: T.green, cursor: "pointer", transition: "all 0.2s", alignSelf: "flex-start",
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = "rgba(42,90,60,0.18)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = "rgba(42,90,60,0.1)"; e.currentTarget.style.transform = ""; }}
+                  >
+                    {msg.action.label} →
+                  </button>
+                )}
+                <span className="chat-time">{msg.time}</span>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="chat-msg assistant">
+                <div className="typing-indicator">
+                  <span className="typing-dot"/><span className="typing-dot"/><span className="typing-dot"/>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Quick chips */}
+          {showChips && (
+            <div className="chat-chips">
+              {QUICK_CHIPS.map((chip, i) => (
+                <button key={chip} className="chat-chip" style={{ animationDelay: `${i * 0.07}s` }}
+                  onClick={() => sendMessage(chip)}>
+                  {chip}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Input row */}
+          <div className="chat-input-row">
+            <textarea
+              ref={inputRef}
+              className="chat-input"
+              placeholder="Ask anything about Aurum…"
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              disabled={isTyping}
+            />
+            <button
+              className="chat-send"
+              onClick={() => sendMessage()}
+              disabled={isTyping || !input.trim()}
+              title="Send"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              </svg>
+            </button>
+          </div>
+
+          {/* Footer */}
+          <div style={{ padding: "8px 14px", background: "rgba(255,255,255,0.4)", borderTop: "1px solid rgba(42,90,60,0.06)", textAlign: "center" }}>
+            <p style={{ fontSize: "0.6rem", color: T.textMuted, letterSpacing: "0.06em" }}>Aurum Fine Dining · Mumbai · +91 22 4001 9999</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
 /* ─── NAVBAR ─────────────────────────────────────────────── */
@@ -940,13 +1346,8 @@ function Navbar({ activePage, setActivePage, cartCount, onCartOpen, cartBounceKe
             ))}
           </ul>
           <div className="nav-actions">
-            <button
-              onClick={onCartOpen}
-              className="cart-icon-btn"
-              key={cartBounceKey}
-              style={{ animation: cartBounceKey > 0 ? "cartBounce 0.42s ease both" : "none" }}
-              title="View Cart"
-            >
+            <button onClick={onCartOpen} className="cart-icon-btn" key={cartBounceKey}
+              style={{ animation: cartBounceKey > 0 ? "cartBounce 0.42s ease both" : "none" }} title="View Cart">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -1012,10 +1413,7 @@ function CartDrawer({ isOpen, onClose, items, updateQty, removeItem, placeOrder,
           ) : (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {items.map(item => (
-                <div key={item.id} style={{
-                  display: "flex", gap: 16, padding: "16px", borderRadius: 16,
-                  background: "rgba(255,255,255,0.7)", border: "1.5px solid rgba(28,26,20,0.07)",
-                }}>
+                <div key={item.id} style={{ display: "flex", gap: 16, padding: "16px", borderRadius: 16, background: "rgba(255,255,255,0.7)", border: "1.5px solid rgba(28,26,20,0.07)" }}>
                   <div style={{ width: 80, height: 80, borderRadius: 12, overflow: "hidden", flexShrink: 0 }}>
                     <img src={item.img} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   </div>
@@ -1057,7 +1455,7 @@ function CartDrawer({ isOpen, onClose, items, updateQty, removeItem, placeOrder,
 }
 
 /* ─── ORDER SUCCESS POPUP ────────────────────────────────── */
-function OrderSuccessPopup({ onClose }) {
+function OrderSuccessPopup() {
   return (
     <div className="order-popup-bg">
       <div className="order-popup">
@@ -1071,15 +1469,12 @@ function OrderSuccessPopup({ onClose }) {
             <span key={i} style={{ color: T.gold, fontSize: "0.95rem", animation: `sparkle ${1 + i * 0.2}s ${i * 0.15}s ease-in-out infinite` }}>{s}</span>
           ))}
         </div>
-        <button onClick={onClose} className="btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-          Continue Exploring
-        </button>
       </div>
     </div>
   );
 }
 
-/* ─── DISH CARD COMPONENT ────────────────────────────────── */
+/* ─── DISH CARD ──────────────────────────────────────────── */
 function DishCard({ dish, addToCart }) {
   const [added, setAdded] = useState(false);
 
@@ -1101,9 +1496,7 @@ function DishCard({ dish, addToCart }) {
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           backgroundClip: "text", animation: "shimmer 5s linear infinite",
           fontFamily: "'Playfair Display', serif", fontSize: "1.2rem", fontWeight: 600,
-        }}>
-          ₹{dish.price.toLocaleString("en-IN")}
-        </span>
+        }}>₹{dish.price.toLocaleString("en-IN")}</span>
       </div>
       <div style={{ padding: "22px 24px 26px", display: "flex", flexDirection: "column", flex: 1, gap: 10 }}>
         <h3 className="font-display" style={{ fontSize: "1.15rem", fontWeight: 600, color: T.text }}>{dish.name}</h3>
@@ -1132,18 +1525,11 @@ function Home({ setActivePage, addToCart }) {
 
   return (
     <div style={{ background: T.bg, position: "relative" }}>
-
-      {/* ── HERO ── */}
       <section style={{ position: "relative", height: "100vh", minHeight: 700, display: "flex", alignItems: "flex-end", overflow: "hidden" }}>
         <FloatingParticles count={20} dark />
         <SparkleField count={12} dark />
-        <img
-          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=90"
-          alt="Fine dining"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-        />
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1920&q=90" alt="Fine dining" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
         <div style={{ position: "absolute", inset: 0, background: GRAD.heroOverlay }} />
-
         <div className="container" style={{ position: "relative", zIndex: 2, paddingBottom: 110 }}>
           <div className="anim-fade-up" style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 100, padding: "8px 20px 8px 14px", marginBottom: 36 }}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#4ade80", boxShadow: "0 0 10px #4ade80", display: "inline-block", animation: "pulseGlow 2s ease infinite" }} />
@@ -1151,11 +1537,7 @@ function Home({ setActivePage, addToCart }) {
           </div>
           <h1 className="font-display anim-fade-up delay-1" style={{ fontSize: "clamp(3.2rem,7.5vw,6.4rem)", fontWeight: 600, lineHeight: 1.05, color: "#FAF8F3", maxWidth: 820, marginBottom: 30 }}>
             Where Taste<br />
-            <em style={{
-              background: GRAD.goldText, backgroundSize: "300% auto",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              backgroundClip: "text", fontStyle: "italic", animation: "shimmer 5s linear infinite", display: "inline-block"
-            }}>Meets Luxury</em>
+            <em style={{ background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontStyle: "italic", animation: "shimmer 5s linear infinite", display: "inline-block" }}>Meets Luxury</em>
           </h1>
           <p className="anim-fade-up delay-2" style={{ fontSize: "1.15rem", color: "rgba(250,248,243,0.78)", maxWidth: 460, lineHeight: 1.8, marginBottom: 48, fontWeight: 300, fontFamily: "'Playfair Display', serif" }}>
             A culinary experience beyond expectations —<br />one unforgettable evening.
@@ -1165,26 +1547,18 @@ function Home({ setActivePage, addToCart }) {
             <button onClick={() => setActivePage("Menu")} className="btn-ghost-light">View Menu</button>
           </div>
         </div>
-
-        {/* Scroll indicator */}
         <div style={{ position: "absolute", bottom: 40, right: "clamp(20px,5vw,72px)", display: "flex", flexDirection: "column", alignItems: "center", gap: 8, opacity: 0.5, animation: "fadeIn 1.5s 1s both" }}>
           <div style={{ width: 1, height: 52, background: "linear-gradient(to bottom, transparent, rgba(250,248,243,0.7))" }} />
           <p style={{ fontSize: "0.58rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "rgba(250,248,243,0.8)" }}>Scroll</p>
         </div>
       </section>
 
-      {/* ── STATS BAR ── */}
       <div style={{ background: GRAD.darkSection, padding: "36px 0" }}>
         <div className="container">
           <div style={{ display: "flex", justifyContent: "space-around", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
             {[["3", "Michelin Stars"], ["120", "Seats"], ["800+", "Wine Labels"], ["18+", "Years of Excellence"]].map(([n, l]) => (
               <div key={l} style={{ textAlign: "center" }}>
-                <p className="font-display" style={{
-                  fontSize: "clamp(1.8rem,3vw,2.8rem)", fontWeight: 600,
-                  background: GRAD.goldText, backgroundSize: "300% auto",
-                  WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                  backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block",
-                }}>{n}</p>
+                <p className="font-display" style={{ fontSize: "clamp(1.8rem,3vw,2.8rem)", fontWeight: 600, background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block" }}>{n}</p>
                 <p style={{ fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,248,243,0.45)", marginTop: 6 }}>{l}</p>
               </div>
             ))}
@@ -1192,7 +1566,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </div>
 
-      {/* ── FEATURED DISHES ── */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: T.bg }}>
         <AmbientOrb x="-8%" y="5%" size={600} color={T.green} opacity={0.05} />
         <AmbientOrb x="75%" y="40%" size={500} color={T.gold} opacity={0.04} />
@@ -1202,21 +1575,13 @@ function Home({ setActivePage, addToCart }) {
             <button onClick={() => setActivePage("Menu")} className="btn-text">Full Menu →</button>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 28 }}>
-            {DISHES.slice(0, 4).map(dish => (
-              <DishCard key={dish.id} dish={dish} addToCart={addToCart} />
-            ))}
+            {DISHES.slice(0, 4).map(dish => <DishCard key={dish.id} dish={dish} addToCart={addToCart} />)}
           </div>
         </div>
       </section>
 
-      {/* ── QUOTE BAND ── */}
       <div style={{ position: "relative", height: 420, overflow: "hidden" }}>
-        <img
-          src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1800&q=85"
-          alt="Ambience"
-          loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+        <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1800&q=85" alt="Ambience" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: "rgba(28,26,20,0.72)" }} />
         <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ textAlign: "center", padding: "0 24px" }}>
@@ -1229,7 +1594,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </div>
 
-      {/* ── WHY CHOOSE US ── */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: T.bgLayer }}>
         <AmbientOrb x="60%" y="10%" size={550} color={T.green} opacity={0.05} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -1237,7 +1601,7 @@ function Home({ setActivePage, addToCart }) {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 24 }}>
             {USPS.map((u, i) => (
               <div key={i} className="glass glass-lift" style={{ padding: "44px 36px", borderRadius: 20 }}>
-                <div style={{ width: 52, height: 52, borderRadius: 14, background: `linear-gradient(135deg, rgba(42,90,60,0.15), rgba(42,90,60,0.05))`, border: "1.5px solid rgba(42,90,60,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", color: T.green, marginBottom: 22 }}>{u.icon}</div>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: "linear-gradient(135deg, rgba(42,90,60,0.15), rgba(42,90,60,0.05))", border: "1.5px solid rgba(42,90,60,0.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", color: T.green, marginBottom: 22 }}>{u.icon}</div>
                 <h3 className="font-display" style={{ fontSize: "1.15rem", fontWeight: 600, color: T.text, marginBottom: 12 }}>{u.title}</h3>
                 <p style={{ fontSize: "0.9rem", color: T.textDim, lineHeight: 1.8 }}>{u.desc}</p>
               </div>
@@ -1246,7 +1610,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* ── CHEF HIGHLIGHT ── */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: T.bg }}>
         <AmbientOrb x="30%" y="30%" size={700} color={T.gold} opacity={0.035} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -1256,13 +1619,7 @@ function Home({ setActivePage, addToCart }) {
               <div key={chef.name} className="chef-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(40px,7vw,100px)", alignItems: "center", direction: idx % 2 === 1 ? "rtl" : "ltr" }}>
                 <div style={{ position: "relative", direction: "ltr" }} className="img-zoom-wrap">
                   <div style={{ position: "absolute", inset: -3, borderRadius: 22, background: GRAD.greenGold, opacity: 0.25, filter: "blur(10px)" }} />
-                  <img
-                    src={chef.img}
-                    alt={chef.name}
-                    loading="lazy"
-                    className="img-zoom"
-                    style={{ width: "100%", height: 580, objectFit: "cover", objectPosition: "top", borderRadius: 18, position: "relative" }}
-                  />
+                  <img src={chef.img} alt={chef.name} loading="lazy" className="img-zoom" style={{ width: "100%", height: 580, objectFit: "cover", objectPosition: "top", borderRadius: 18, position: "relative" }} />
                   <div style={{ position: "absolute", bottom: -22, right: -22, background: GRAD.primary, padding: "22px 30px", borderRadius: 16, boxShadow: "0 10px 40px rgba(42,90,60,0.4)" }}>
                     <p className="font-display" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(250,248,243,0.7)", marginBottom: 4 }}>{chef.stats[0][1]}</p>
                     <p className="font-display" style={{ fontSize: "2.2rem", color: "#FAF8F3", fontWeight: 600, lineHeight: 1 }}>{chef.stats[0][0]}</p>
@@ -1271,26 +1628,15 @@ function Home({ setActivePage, addToCart }) {
                 <div style={{ direction: "ltr" }}>
                   <p className="eyebrow" style={{ marginBottom: 16 }}>{chef.title}</p>
                   <h2 className="font-display" style={{ fontSize: "clamp(2rem,3.5vw,3.2rem)", fontWeight: 600, color: T.text, lineHeight: 1.12, marginBottom: 26 }}>
-                    Chef <em style={{
-                      background: GRAD.goldText, backgroundSize: "300% auto",
-                      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                      backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block"
-                    }}>{chef.name.split(" ").slice(1).join(" ")}</em>
+                    Chef <em style={{ background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block" }}>{chef.name.split(" ").slice(1).join(" ")}</em>
                   </h2>
                   <hr className="rule" style={{ marginBottom: 28 }} />
                   <p style={{ fontSize: "1.05rem", color: T.textDim, lineHeight: 1.85, marginBottom: 18, fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>{chef.bio}</p>
-                  <p style={{ fontSize: "1rem", color: T.textDim, lineHeight: 1.85, marginBottom: 36, fontFamily: "'Playfair Display', serif", fontWeight: 300, fontStyle: "italic" }}>
-                    "{chef.quote}"
-                  </p>
+                  <p style={{ fontSize: "1rem", color: T.textDim, lineHeight: 1.85, marginBottom: 36, fontFamily: "'Playfair Display', serif", fontWeight: 300, fontStyle: "italic" }}>"{chef.quote}"</p>
                   <div style={{ display: "flex", gap: 44, marginBottom: 44, flexWrap: "wrap" }}>
                     {chef.stats.map(([n, l]) => (
                       <div key={l}>
-                        <p className="font-display" style={{
-                          fontSize: "2.4rem", lineHeight: 1, fontWeight: 600,
-                          background: GRAD.goldText, backgroundSize: "300% auto",
-                          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                          backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block"
-                        }}>{n}</p>
+                        <p className="font-display" style={{ fontSize: "2.4rem", lineHeight: 1, fontWeight: 600, background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", animation: "shimmer 5s linear infinite", display: "inline-block" }}>{n}</p>
                         <p style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: T.textMuted, marginTop: 7 }}>{l}</p>
                       </div>
                     ))}
@@ -1303,7 +1649,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: GRAD.darkSection }}>
         <FloatingParticles count={14} dark />
         <AmbientOrb x="50%" y="-20%" size={700} color={T.green} opacity={0.1} />
@@ -1330,7 +1675,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* ── GALLERY PREVIEW ── */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: T.bg }}>
         <AmbientOrb x="70%" y="10%" size={500} color={T.gold} opacity={0.04} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -1338,14 +1682,9 @@ function Home({ setActivePage, addToCart }) {
             <SectionHeader eyebrow="The Aurum World" title="Gallery" />
             <button onClick={() => setActivePage("Portfolio")} className="btn-text">View All →</button>
           </div>
-          {/* Responsive gallery grid */}
           <div className="gallery-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gridTemplateRows: "300px 300px", gap: 14 }}>
             {PORTFOLIO_ITEMS.slice(0, 5).map((item, i) => (
-              <div key={i} className="img-zoom-wrap" style={{
-                gridColumn: i === 0 ? "1 / 2" : undefined,
-                gridRow: i === 0 ? "1 / 3" : undefined,
-                position: "relative", borderRadius: 18, overflow: "hidden", cursor: "pointer",
-              }}>
+              <div key={i} className="img-zoom-wrap" style={{ gridColumn: i === 0 ? "1 / 2" : undefined, gridRow: i === 0 ? "1 / 3" : undefined, position: "relative", borderRadius: 18, overflow: "hidden", cursor: "pointer" }}>
                 <img src={item.img} alt={item.title} loading="lazy" className="img-zoom" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 <div style={{ position: "absolute", inset: 0, background: "rgba(28,26,20,0)", display: "flex", alignItems: "flex-end", padding: "20px 22px", transition: "background 0.35s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(28,26,20,0.55)"; e.currentTarget.querySelectorAll("p").forEach(el => el.style.opacity = "1"); }}
@@ -1358,7 +1697,6 @@ function Home({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* ── CTA BAND ── */}
       <section style={{ position: "relative", overflow: "hidden", padding: "90px clamp(20px,5vw,72px)" }}>
         <div style={{ position: "absolute", inset: 0, background: GRAD.primary }} />
         <div style={{ position: "absolute", inset: 0, backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
@@ -1368,9 +1706,7 @@ function Home({ setActivePage, addToCart }) {
             <h2 className="font-display" style={{ fontSize: "clamp(2rem,3.5vw,2.8rem)", color: "#FAF8F3", fontWeight: 500, marginBottom: 12 }}>Reserve Your Table Tonight</h2>
             <p style={{ color: "rgba(250,248,243,0.7)", fontSize: "1.05rem", fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>An evening at Aurum awaits. Book now to secure your experience.</p>
           </div>
-          <button
-            onClick={() => setActivePage("Contact")}
-            style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 36px", background: T.bg, color: T.green, fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", borderRadius: 12, flexShrink: 0, boxShadow: "0 6px 24px rgba(28,26,20,0.2)", transition: "all 0.25s" }}
+          <button onClick={() => setActivePage("Contact")} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 36px", background: T.bg, color: T.green, fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", borderRadius: 12, flexShrink: 0, boxShadow: "0 6px 24px rgba(28,26,20,0.2)", transition: "all 0.25s" }}
             onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 12px 36px rgba(28,26,20,0.3)"; }}
             onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 6px 24px rgba(28,26,20,0.2)"; }}>
             Make a Reservation →
@@ -1385,7 +1721,6 @@ function Home({ setActivePage, addToCart }) {
 function About() {
   return (
     <div style={{ background: T.bg, paddingTop: 76 }}>
-      {/* Hero */}
       <section className="section" style={{ position: "relative", overflow: "hidden" }}>
         <AmbientOrb x="-5%" y="5%" size={600} color={T.green} opacity={0.06} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -1407,12 +1742,7 @@ function About() {
             </div>
             <div style={{ position: "relative" }}>
               <div style={{ position: "absolute", inset: -4, borderRadius: 22, background: GRAD.greenGold, opacity: 0.2, filter: "blur(14px)" }} />
-              <img
-                src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=900&q=90"
-                alt="Aurum interior"
-                loading="lazy"
-                style={{ width: "100%", height: 580, objectFit: "cover", borderRadius: 18, position: "relative" }}
-              />
+              <img src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=900&q=90" alt="Aurum interior" loading="lazy" style={{ width: "100%", height: 580, objectFit: "cover", borderRadius: 18, position: "relative" }} />
               <div style={{ position: "absolute", bottom: -20, left: -20, background: GRAD.primary, padding: "22px 30px", borderRadius: 14, boxShadow: "0 10px 36px rgba(42,90,60,0.4)" }}>
                 <p className="font-display" style={{ fontSize: "2.6rem", color: "#FAF8F3", fontWeight: 600, lineHeight: 1 }}>2008</p>
                 <p style={{ fontSize: "0.6rem", letterSpacing: "0.24em", textTransform: "uppercase", color: "rgba(250,248,243,0.65)", marginTop: 6 }}>Est. Mumbai</p>
@@ -1422,7 +1752,6 @@ function About() {
         </div>
       </section>
 
-      {/* Timeline */}
       <section className="section" style={{ position: "relative", overflow: "hidden", background: T.bgLayer }}>
         <AmbientOrb x="80%" y="20%" size={500} color={T.gold} opacity={0.04} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
@@ -1443,7 +1772,6 @@ function About() {
         </div>
       </section>
 
-      {/* Awards */}
       <section className="section" style={{ background: T.bg }}>
         <div className="container">
           <SectionHeader eyebrow="Recognition" title={<>Awards & <em>Acclaim</em></>} center />
@@ -1459,7 +1787,6 @@ function About() {
         </div>
       </section>
 
-      {/* Ambience grid */}
       <section className="section-sm" style={{ background: T.bgLayer }}>
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gridTemplateRows: "300px 300px", gap: 14 }}>
@@ -1481,7 +1808,6 @@ function Menu({ setActivePage, addToCart }) {
 
   return (
     <div style={{ background: T.bg, paddingTop: 76 }}>
-      {/* Hero */}
       <section className="section" style={{ position: "relative", overflow: "hidden" }}>
         <FloatingParticles count={14} />
         <AmbientOrb x="50%" y="-5%" size={700} color={T.green} opacity={0.06} />
@@ -1496,22 +1822,14 @@ function Menu({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* Category filters */}
       <div style={{ display: "flex", justifyContent: "center", gap: 10, padding: "0 24px 56px", flexWrap: "wrap", position: "relative", zIndex: 1 }}>
         {categories.map(cat => (
-          <button key={cat} onClick={() => setActiveCategory(cat)} style={{
-            padding: "10px 24px", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase",
-            borderRadius: 10, border: "1.5px solid", transition: "all 0.25s",
-            borderColor: activeCategory === cat ? T.green : "rgba(28,26,20,0.15)",
-            background: activeCategory === cat ? "rgba(42,90,60,0.1)" : "rgba(255,255,255,0.5)",
-            color: activeCategory === cat ? T.green : T.textDim,
-          }}>
+          <button key={cat} onClick={() => setActiveCategory(cat)} style={{ padding: "10px 24px", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", borderRadius: 10, border: "1.5px solid", transition: "all 0.25s", borderColor: activeCategory === cat ? T.green : "rgba(28,26,20,0.15)", background: activeCategory === cat ? "rgba(42,90,60,0.1)" : "rgba(255,255,255,0.5)", color: activeCategory === cat ? T.green : T.textDim }}>
             {cat}
           </button>
         ))}
       </div>
 
-      {/* Dishes grid */}
       <section style={{ paddingBottom: 100 }}>
         <div className="container">
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(310px, 1fr))", gap: 28 }}>
@@ -1520,7 +1838,6 @@ function Menu({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* Services */}
       <section className="section" style={{ paddingTop: 0, borderTop: "1.5px solid rgba(28,26,20,0.07)", background: T.bgLayer }}>
         <div className="container">
           <SectionHeader eyebrow="What We Offer" title={<>Our <em>Services</em></>} center />
@@ -1537,14 +1854,8 @@ function Menu({ setActivePage, addToCart }) {
         </div>
       </section>
 
-      {/* Promo */}
       <div style={{ position: "relative", height: 380, overflow: "hidden" }}>
-        <img
-          src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1800&q=85"
-          alt="Private dining"
-          loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
+        <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=1800&q=85" alt="Private dining" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         <div style={{ position: "absolute", inset: 0, background: "rgba(28,26,20,0.68)", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 28, textAlign: "center", padding: "0 20px" }}>
           <p className="font-display" style={{ fontSize: "clamp(1.6rem,3.5vw,2.5rem)", color: "#FAF8F3", fontStyle: "italic", fontWeight: 400 }}>Planning something special?</p>
           <button onClick={() => setActivePage("Contact")} className="btn-gold">Talk to Our Events Team →</button>
@@ -1575,13 +1886,7 @@ function Portfolio() {
 
       <div style={{ display: "flex", justifyContent: "center", gap: 10, padding: "0 24px 40px", flexWrap: "wrap" }}>
         {FILTERS.map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{
-            padding: "10px 26px", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase",
-            borderRadius: 10, border: "1.5px solid", transition: "all 0.25s",
-            borderColor: filter === f ? T.green : "rgba(28,26,20,0.15)",
-            background: filter === f ? "rgba(42,90,60,0.1)" : "rgba(255,255,255,0.5)",
-            color: filter === f ? T.green : T.textDim,
-          }}>{f}</button>
+          <button key={f} onClick={() => setFilter(f)} style={{ padding: "10px 26px", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.16em", textTransform: "uppercase", borderRadius: 10, border: "1.5px solid", transition: "all 0.25s", borderColor: filter === f ? T.green : "rgba(28,26,20,0.15)", background: filter === f ? "rgba(42,90,60,0.1)" : "rgba(255,255,255,0.5)", color: filter === f ? T.green : T.textDim }}>{f}</button>
         ))}
       </div>
 
@@ -1589,8 +1894,7 @@ function Portfolio() {
         <div className="container">
           <div style={{ columns: "3 280px", gap: 16 }}>
             {filtered.map((item, i) => (
-              <div key={`${filter}-${i}`} onClick={() => setLightbox(item)} className="img-zoom-wrap"
-                style={{ position: "relative", breakInside: "avoid", marginBottom: 16, borderRadius: 18, overflow: "hidden", cursor: "zoom-in", border: "1.5px solid rgba(28,26,20,0.07)" }}>
+              <div key={`${filter}-${i}`} onClick={() => setLightbox(item)} className="img-zoom-wrap" style={{ position: "relative", breakInside: "avoid", marginBottom: 16, borderRadius: 18, overflow: "hidden", cursor: "zoom-in", border: "1.5px solid rgba(28,26,20,0.07)" }}>
                 <img src={item.img} alt={item.title} loading="lazy" className="img-zoom" style={{ width: "100%", display: "block" }} />
                 <div style={{ position: "absolute", inset: 0, background: "rgba(28,26,20,0)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8, transition: "background 0.35s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "rgba(28,26,20,0.6)"; e.currentTarget.querySelectorAll("p,span").forEach(el => el.style.opacity = "1"); }}
@@ -1608,8 +1912,7 @@ function Portfolio() {
         <div onClick={() => setLightbox(null)} style={{ position: "fixed", inset: 0, zIndex: 200, background: "rgba(28,26,20,0.96)", backdropFilter: "blur(18px)", display: "flex", alignItems: "center", justifyContent: "center", padding: 28, animation: "fadeIn 0.2s ease both" }}>
           <button onClick={() => setLightbox(null)} style={{ position: "absolute", top: 32, right: 36, color: "rgba(250,248,243,0.55)", fontSize: "1.4rem", transition: "color 0.2s" }}
             onMouseEnter={e => e.currentTarget.style.color = "#FAF8F3"}
-            onMouseLeave={e => e.currentTarget.style.color = "rgba(250,248,243,0.55)"}
-          >✕</button>
+            onMouseLeave={e => e.currentTarget.style.color = "rgba(250,248,243,0.55)"}>✕</button>
           <div onClick={e => e.stopPropagation()} style={{ maxWidth: 900, width: "100%", animation: "scaleIn 0.28s ease both" }}>
             <img src={lightbox.img} alt={lightbox.title} style={{ width: "100%", maxHeight: "78vh", objectFit: "contain", borderRadius: 18 }} />
             <div style={{ marginTop: 20, textAlign: "center" }}>
@@ -1651,8 +1954,6 @@ function Contact() {
         <AmbientOrb x="85%" y="30%" size={500} color={T.gold} opacity={0.04} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "clamp(40px,6vw,80px)", alignItems: "start" }}>
-
-            {/* Form */}
             <div className="glass" style={{ padding: "48px clamp(28px,5vw,44px)", borderRadius: 24 }}>
               <h2 className="font-display" style={{ fontSize: "1.6rem", fontWeight: 600, color: T.text, marginBottom: 36 }}>Reserve Your Table</h2>
               {sent && (
@@ -1679,24 +1980,19 @@ function Contact() {
                 </div>
                 <div>
                   <label style={{ fontSize: "0.66rem", letterSpacing: "0.2em", textTransform: "uppercase", color: T.textMuted, display: "block", marginBottom: 10 }}>Special Requests</label>
-                  <textarea rows={4} placeholder="Dietary requirements, occasion, seating preferences..." className="field" style={{ resize: "none" }}
-                    value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
+                  <textarea rows={4} placeholder="Dietary requirements, occasion, seating preferences..." className="field" style={{ resize: "none" }} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
                 </div>
                 <button type="submit" className="btn-primary" style={{ width: "100%", justifyContent: "center", padding: "17px" }}>Confirm Reservation</button>
               </form>
             </div>
 
-            {/* Info */}
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
               <div className="glass" style={{ padding: "40px 36px", borderRadius: 22, textAlign: "center" }}>
                 <p style={{ fontSize: "1.8rem", marginBottom: 14 }}>◈</p>
                 <p className="font-display" style={{ fontSize: "1.2rem", color: T.text, marginBottom: 8 }}>Aurum Fine Dining</p>
                 <p style={{ fontSize: "0.9rem", color: T.textDim, lineHeight: 1.75 }}>12, Napean Sea Road, Malabar Hill<br />Mumbai, Maharashtra 400 006</p>
-                <a href="https://maps.google.com/?q=Napean+Sea+Road,+Malabar+Hill,+Mumbai" target="_blank" rel="noreferrer" className="btn-text" style={{ marginTop: 18, display: "inline-flex" }}>
-                  Open in Maps →
-                </a>
+                <a href="https://maps.google.com/?q=Napean+Sea+Road,+Malabar+Hill,+Mumbai" target="_blank" rel="noreferrer" className="btn-text" style={{ marginTop: 18, display: "inline-flex" }}>Open in Maps →</a>
               </div>
-
               <div className="glass" style={{ padding: "30px 36px", borderRadius: 22 }}>
                 <p style={{ fontSize: "0.65rem", letterSpacing: "0.22em", textTransform: "uppercase", color: T.textMuted, marginBottom: 18 }}>Opening Hours</p>
                 {[["Mon – Fri", "12:00 PM – 11:00 PM"], ["Saturday", "11:00 AM – 11:30 PM"], ["Sunday", "11:00 AM – 10:00 PM"]].map(([day, time]) => (
@@ -1706,7 +2002,6 @@ function Contact() {
                   </div>
                 ))}
               </div>
-
               <div className="glass" style={{ padding: "30px 36px", borderRadius: 22 }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   {[["Reservations", "+91 22 4001 9999"], ["Email", "reserve@aurum.in"], ["Instagram", "@aurum.mumbai"]].map(([label, val]) => (
@@ -1722,17 +2017,12 @@ function Contact() {
         </div>
       </section>
 
-      {/* ── LOCATION SECTION ── */}
       <section className="section" style={{ paddingTop: 0, position: "relative", overflow: "hidden", background: T.bgLayer }}>
         <AmbientOrb x="20%" y="10%" size={500} color={T.green} opacity={0.05} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <SectionHeader eyebrow="Find Us" title={<>Our <em>Location</em></>} center />
           <div className="map-container" style={{ marginBottom: 44, height: 440 }}>
-            <iframe
-              title="Aurum Restaurant Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.0741849296327!2d72.80574931489836!3d18.963805787174077!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cf26f4692b15%3A0xf19b5b4e92c5f42!2sNapean%20Sea%20Rd%2C%20Malabar%20Hill%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin"
-              width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-            />
+            <iframe title="Aurum Restaurant Location" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3771.0741849296327!2d72.80574931489836!3d18.963805787174077!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7cf26f4692b15%3A0xf19b5b4e92c5f42!2sNapean%20Sea%20Rd%2C%20Malabar%20Hill%2C%20Mumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade" />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(250px,1fr))", gap: 18 }}>
             {[
@@ -1760,12 +2050,9 @@ function FaqItem({ faq, index, isOpen, onToggle }) {
   const [height, setHeight] = useState(0);
 
   useEffect(() => {
-    if (answerRef.current) {
-      setHeight(answerRef.current.scrollHeight);
-    }
+    if (answerRef.current) setHeight(answerRef.current.scrollHeight);
   }, [faq.answer]);
 
-  // Category colour palette — cycles through green/gold shades
   const categoryColors = [
     { bg: "linear-gradient(135deg, rgba(42,90,60,0.15), rgba(42,90,60,0.06))", border: "rgba(42,90,60,0.22)", icon: T.green },
     { bg: "linear-gradient(135deg, rgba(184,134,11,0.14), rgba(184,134,11,0.05))", border: "rgba(184,134,11,0.22)", icon: T.gold },
@@ -1774,94 +2061,26 @@ function FaqItem({ faq, index, isOpen, onToggle }) {
   const activePalette = { bg: "linear-gradient(135deg, rgba(42,90,60,0.18), rgba(42,90,60,0.08))", border: "rgba(42,90,60,0.28)", icon: T.green };
 
   return (
-    <div
-      className={`faq-card${isOpen ? " active" : ""}`}
-      style={{ animationDelay: `${index * 0.06}s` }}
-    >
-      {/* Progress strip shown when open */}
+    <div className={`faq-card${isOpen ? " active" : ""}`} style={{ animationDelay: `${index * 0.06}s` }}>
       {isOpen && <div className="faq-progress-strip" />}
-
-      {/* Trigger */}
       <button className="faq-trigger" onClick={() => onToggle(index)} aria-expanded={isOpen}>
-        {/* Icon badge */}
-        <div
-          className="faq-icon-badge"
-          style={{
-            background: isOpen ? activePalette.bg : palette.bg,
-            border: `1.5px solid ${isOpen ? activePalette.border : palette.border}`,
-            color: isOpen ? activePalette.icon : palette.icon,
-            transform: isOpen ? "scale(1.08)" : "scale(1)",
-            boxShadow: isOpen ? `0 4px 18px rgba(42,90,60,0.18)` : "none",
-          }}
-        >
+        <div className="faq-icon-badge" style={{ background: isOpen ? activePalette.bg : palette.bg, border: `1.5px solid ${isOpen ? activePalette.border : palette.border}`, color: isOpen ? activePalette.icon : palette.icon, transform: isOpen ? "scale(1.08)" : "scale(1)", boxShadow: isOpen ? "0 4px 18px rgba(42,90,60,0.18)" : "none" }}>
           {faq.icon}
         </div>
-
-        {/* Text block */}
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* Category pill */}
-          <span
-            className="faq-category-tag"
-            style={{
-              background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(184,134,11,0.08)",
-              color: isOpen ? T.green : T.gold,
-              border: `1px solid ${isOpen ? "rgba(42,90,60,0.2)" : "rgba(184,134,11,0.18)"}`,
-              marginBottom: 8,
-              display: "inline-block",
-            }}
-          >
-            {faq.category}
-          </span>
-          <p
-            className="faq-question-text"
-            style={{ color: isOpen ? T.green : T.text }}
-          >
-            {faq.question}
-          </p>
+          <span className="faq-category-tag" style={{ background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(184,134,11,0.08)", color: isOpen ? T.green : T.gold, border: `1px solid ${isOpen ? "rgba(42,90,60,0.2)" : "rgba(184,134,11,0.18)"}`, marginBottom: 8, display: "inline-block" }}>{faq.category}</span>
+          <p className="faq-question-text" style={{ color: isOpen ? T.green : T.text }}>{faq.question}</p>
         </div>
-
-        {/* Chevron */}
-        <div
-          className="faq-chevron-wrap"
-          style={{
-            background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(28,26,20,0.05)",
-            border: `1.5px solid ${isOpen ? "rgba(42,90,60,0.22)" : "rgba(28,26,20,0.08)"}`,
-            boxShadow: isOpen ? "0 2px 10px rgba(42,90,60,0.12)" : "none",
-          }}
-        >
-          <svg
-            className={`faq-chevron${isOpen ? " open" : ""}`}
-            width="13" height="13" viewBox="0 0 13 13" fill="none"
-          >
-            <path
-              d="M2.5 4.5L6.5 8.5L10.5 4.5"
-              stroke={isOpen ? T.green : T.textDim}
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+        <div className="faq-chevron-wrap" style={{ background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(28,26,20,0.05)", border: `1.5px solid ${isOpen ? "rgba(42,90,60,0.22)" : "rgba(28,26,20,0.08)"}`, boxShadow: isOpen ? "0 2px 10px rgba(42,90,60,0.12)" : "none" }}>
+          <svg className={`faq-chevron${isOpen ? " open" : ""}`} width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <path d="M2.5 4.5L6.5 8.5L10.5 4.5" stroke={isOpen ? T.green : T.textDim} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </button>
-
-      {/* Animated divider */}
-      <div
-        className="faq-divider"
-        style={{ opacity: isOpen ? 1 : 0 }}
-      />
-
-      {/* Answer panel */}
-      <div
-        className="faq-answer-panel"
-        style={{
-          maxHeight: isOpen ? `${height + 56}px` : "0px",
-          opacity: isOpen ? 1 : 0,
-        }}
-      >
+      <div className="faq-divider" style={{ opacity: isOpen ? 1 : 0 }} />
+      <div className="faq-answer-panel" style={{ maxHeight: isOpen ? `${height + 56}px` : "0px", opacity: isOpen ? 1 : 0 }}>
         <div className="faq-answer-inner" ref={answerRef}>
-          <p className="faq-answer-text">
-            {faq.answer}
-          </p>
+          <p className="faq-answer-text">{faq.answer}</p>
         </div>
       </div>
     </div>
@@ -1876,155 +2095,70 @@ function HelpPage({ setActivePage }) {
     setOpenIdx(prev => (prev === i ? null : i));
   }, []);
 
-  // Split FAQs into two columns for large screens
   const leftFaqs  = FAQS.filter((_, i) => i % 2 === 0);
   const rightFaqs = FAQS.filter((_, i) => i % 2 === 1);
 
   return (
     <div style={{ background: T.bg, paddingTop: 76 }}>
-
-      {/* ── HERO ── */}
       <section className="section-sm" style={{ position: "relative", overflow: "hidden" }}>
         <AmbientOrb x="55%" y="-10%" size={750} color={T.green} opacity={0.055} />
         <AmbientOrb x="5%"  y="35%"  size={480} color={T.gold}  opacity={0.04}  />
         <FloatingParticles count={12} />
         <SparkleField count={10} />
-
         <div className="container" style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-          {/* Decorative top ornament */}
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 14,
-            marginBottom: 32,
-          }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 14, marginBottom: 32 }}>
             {["◇", "✦", "◈", "✦", "◇"].map((s, i) => (
-              <span key={i} style={{
-                color: i === 2 ? T.green : T.gold,
-                fontSize: i === 2 ? "1.2rem" : "0.7rem",
-                opacity: i === 2 ? 1 : 0.5,
-                animation: `sparkle ${2 + i * 0.4}s ${i * 0.3}s ease-in-out infinite`,
-              }}>{s}</span>
+              <span key={i} style={{ color: i === 2 ? T.green : T.gold, fontSize: i === 2 ? "1.2rem" : "0.7rem", opacity: i === 2 ? 1 : 0.5, animation: `sparkle ${2 + i * 0.4}s ${i * 0.3}s ease-in-out infinite` }}>{s}</span>
             ))}
           </div>
-
           <p className="eyebrow" style={{ marginBottom: 20 }}>Guest Support</p>
-          <h1 className="font-display" style={{
-            fontSize: "clamp(2.8rem,6vw,5rem)", fontWeight: 600,
-            color: T.text, lineHeight: 1.08, marginBottom: 24,
-          }}>
+          <h1 className="font-display" style={{ fontSize: "clamp(2.8rem,6vw,5rem)", fontWeight: 600, color: T.text, lineHeight: 1.08, marginBottom: 24 }}>
             How Can We{" "}
-            <em style={{
-              background: GRAD.goldText, backgroundSize: "300% auto",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              backgroundClip: "text", fontStyle: "italic",
-              animation: "shimmer 5s linear infinite", display: "inline-block",
-            }}>Help You?</em>
+            <em style={{ background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontStyle: "italic", animation: "shimmer 5s linear infinite", display: "inline-block" }}>Help You?</em>
           </h1>
-          <p style={{
-            color: T.textDim, fontSize: "1.08rem", lineHeight: 1.88,
-            maxWidth: 580, margin: "0 auto 48px",
-            fontFamily: "'Playfair Display', serif", fontWeight: 300,
-          }}>
+          <p style={{ color: T.textDim, fontSize: "1.08rem", lineHeight: 1.88, maxWidth: 580, margin: "0 auto 48px", fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
             Find answers to the questions our guests ask most often. If you need further assistance, our team is always a call away.
           </p>
-
-          {/* Quick-stat pills */}
           <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-            {[
-              { icon: "◈", label: "10 Topics Covered" },
-              { icon: "✦", label: "Instant Answers" },
-              { icon: "◇", label: "Expert Support" },
-            ].map(({ icon, label }) => (
-              <div key={label} style={{
-                display: "inline-flex", alignItems: "center", gap: 9,
-                padding: "9px 20px", borderRadius: 100,
-                background: "rgba(255,255,255,0.65)", backdropFilter: "blur(16px)",
-                border: "1.5px solid rgba(42,90,60,0.15)",
-                fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.14em",
-                textTransform: "uppercase", color: T.textDim,
-              }}>
-                <span style={{ color: T.green, fontSize: "0.85rem" }}>{icon}</span>
-                {label}
+            {[{ icon: "◈", label: "10 Topics Covered" }, { icon: "✦", label: "Instant Answers" }, { icon: "◇", label: "Expert Support" }].map(({ icon, label }) => (
+              <div key={label} style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "9px 20px", borderRadius: 100, background: "rgba(255,255,255,0.65)", backdropFilter: "blur(16px)", border: "1.5px solid rgba(42,90,60,0.15)", fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: T.textDim }}>
+                <span style={{ color: T.green, fontSize: "0.85rem" }}>{icon}</span>{label}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── FAQ ACCORDION ── */}
       <section className="section" style={{ paddingTop: 24, position: "relative", overflow: "hidden" }}>
         <AmbientOrb x="85%" y="20%" size={520} color={T.gold}  opacity={0.04} />
         <AmbientOrb x="-5%" y="60%" size={480} color={T.green} opacity={0.04} />
-
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div style={{ maxWidth: 920, margin: "0 auto" }}>
-            <SectionHeader
-              eyebrow="Frequently Asked"
-              title={<>Common <em>Questions</em></>}
-              subtitle="Everything you need to know before your visit to Aurum — from reservations to our private dining rooms."
-            />
-
-            {/* Two-column layout on large screens, single on mobile */}
+            <SectionHeader eyebrow="Frequently Asked" title={<>Common <em>Questions</em></>} subtitle="Everything you need to know before your visit to Aurum — from reservations to our private dining rooms." />
             <style>{`
               @media (min-width: 900px) {
-                .faq-two-col {
-                  display: grid !important;
-                  grid-template-columns: 1fr 1fr;
-                  gap: 0 28px;
-                  align-items: start;
-                }
+                .faq-two-col { display: grid !important; grid-template-columns: 1fr 1fr; gap: 0 28px; align-items: start; }
               }
             `}</style>
-
             <div className="faq-two-col" style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-              {/* Left column */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {leftFaqs.map((faq) => {
                   const realIdx = FAQS.indexOf(faq);
-                  return (
-                    <FaqItem
-                      key={realIdx}
-                      faq={faq}
-                      index={realIdx}
-                      isOpen={openIdx === realIdx}
-                      onToggle={handleToggle}
-                    />
-                  );
+                  return <FaqItem key={realIdx} faq={faq} index={realIdx} isOpen={openIdx === realIdx} onToggle={handleToggle} />;
                 })}
               </div>
-              {/* Right column */}
               <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                 {rightFaqs.map((faq) => {
                   const realIdx = FAQS.indexOf(faq);
-                  return (
-                    <FaqItem
-                      key={realIdx}
-                      faq={faq}
-                      index={realIdx}
-                      isOpen={openIdx === realIdx}
-                      onToggle={handleToggle}
-                    />
-                  );
+                  return <FaqItem key={realIdx} faq={faq} index={realIdx} isOpen={openIdx === realIdx} onToggle={handleToggle} />;
                 })}
               </div>
             </div>
-
-            {/* Collapse-all button when one is open */}
             {openIdx !== null && (
               <div style={{ textAlign: "center", marginTop: 36, animation: "fadeUp 0.3s ease both" }}>
-                <button
-                  onClick={() => setOpenIdx(null)}
-                  style={{
-                    fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.2em",
-                    textTransform: "uppercase", color: T.textMuted,
-                    display: "inline-flex", alignItems: "center", gap: 8,
-                    padding: "10px 22px", borderRadius: 10,
-                    border: "1.5px solid rgba(28,26,20,0.1)",
-                    background: "rgba(255,255,255,0.5)",
-                    transition: "all 0.25s",
-                  }}
+                <button onClick={() => setOpenIdx(null)} style={{ fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.2em", textTransform: "uppercase", color: T.textMuted, display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 22px", borderRadius: 10, border: "1.5px solid rgba(28,26,20,0.1)", background: "rgba(255,255,255,0.5)", transition: "all 0.25s" }}
                   onMouseEnter={e => { e.currentTarget.style.color = T.text; e.currentTarget.style.borderColor = "rgba(28,26,20,0.2)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = T.textMuted; e.currentTarget.style.borderColor = "rgba(28,26,20,0.1)"; }}
-                >
+                  onMouseLeave={e => { e.currentTarget.style.color = T.textMuted; e.currentTarget.style.borderColor = "rgba(28,26,20,0.1)"; }}>
                   ↑ Collapse all
                 </button>
               </div>
@@ -2033,80 +2167,37 @@ function HelpPage({ setActivePage }) {
         </div>
       </section>
 
-      {/* ── STILL NEED HELP ── */}
       <section className="section" style={{ paddingTop: 0, position: "relative", overflow: "hidden", background: T.bgLayer }}>
         <AmbientOrb x="40%" y="15%" size={620} color={T.green} opacity={0.05} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
           <div style={{ maxWidth: 920, margin: "0 auto" }}>
-
-            {/* Main CTA card */}
-            <div className="glass" style={{
-              borderRadius: 28, padding: "56px clamp(32px,5vw,72px)",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              flexWrap: "wrap", gap: 36,
-              background: "rgba(255,255,255,0.82)",
-              boxShadow: "0 12px 60px rgba(42,90,60,0.08), 0 1px 0 rgba(255,255,255,0.9) inset",
-              marginBottom: 20,
-              position: "relative", overflow: "hidden",
-            }}>
-              {/* Decorative corner ornament */}
-              <div style={{
-                position: "absolute", top: -30, right: -30, width: 160, height: 160,
-                borderRadius: "50%", background: "radial-gradient(circle, rgba(184,134,11,0.08), transparent 70%)",
-                pointerEvents: "none",
-              }} />
-
+            <div className="glass" style={{ borderRadius: 28, padding: "56px clamp(32px,5vw,72px)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 36, background: "rgba(255,255,255,0.82)", boxShadow: "0 12px 60px rgba(42,90,60,0.08), 0 1px 0 rgba(255,255,255,0.9) inset", marginBottom: 20, position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: -30, right: -30, width: 160, height: 160, borderRadius: "50%", background: "radial-gradient(circle, rgba(184,134,11,0.08), transparent 70%)", pointerEvents: "none" }} />
               <div>
                 <p className="eyebrow" style={{ marginBottom: 16 }}>Still Have Questions?</p>
-                <h2 className="font-display" style={{
-                  fontSize: "clamp(1.7rem,3vw,2.4rem)", fontWeight: 600,
-                  color: T.text, marginBottom: 16, lineHeight: 1.2,
-                }}>
+                <h2 className="font-display" style={{ fontSize: "clamp(1.7rem,3vw,2.4rem)", fontWeight: 600, color: T.text, marginBottom: 16, lineHeight: 1.2 }}>
                   Our team is{" "}
-                  <em style={{
-                    background: GRAD.goldText, backgroundSize: "300% auto",
-                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-                    backgroundClip: "text", fontStyle: "italic",
-                    animation: "shimmer 5s linear infinite", display: "inline-block",
-                  }}>always here.</em>
+                  <em style={{ background: GRAD.goldText, backgroundSize: "300% auto", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", fontStyle: "italic", animation: "shimmer 5s linear infinite", display: "inline-block" }}>always here.</em>
                 </h2>
-                <p style={{
-                  fontSize: "0.94rem", color: T.textDim, lineHeight: 1.82,
-                  maxWidth: 400, fontFamily: "'Playfair Display', serif", fontWeight: 300,
-                }}>
+                <p style={{ fontSize: "0.94rem", color: T.textDim, lineHeight: 1.82, maxWidth: 400, fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
                   Reach out via phone, email, or visit us directly. We are happy to assist with reservations, dietary enquiries, or anything else you need.
                 </p>
               </div>
-
               <div style={{ display: "flex", flexDirection: "column", gap: 13, flexShrink: 0 }}>
-                <button onClick={() => setActivePage("Contact")} className="btn-primary">
-                  Make a Reservation ✦
-                </button>
-                <a
-                  href="tel:+912240019999"
-                  style={{
-                    display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    gap: 10, padding: "14px 30px", borderRadius: 12,
-                    border: "1.5px solid rgba(28,26,20,0.18)", background: "rgba(255,255,255,0.55)",
-                    color: T.text, fontSize: "0.76rem", fontWeight: 500,
-                    letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
-                    transition: "all 0.25s",
-                  }}
+                <button onClick={() => setActivePage("Contact")} className="btn-primary">Make a Reservation ✦</button>
+                <a href="tel:+912240019999" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "14px 30px", borderRadius: 12, border: "1.5px solid rgba(28,26,20,0.18)", background: "rgba(255,255,255,0.55)", color: T.text, fontSize: "0.76rem", fontWeight: 500, letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none", transition: "all 0.25s" }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.background = "rgba(42,90,60,0.08)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(28,26,20,0.18)"; e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.transform = ""; }}
-                >
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(28,26,20,0.18)"; e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.transform = ""; }}>
                   📞 +91 22 4001 9999
                 </a>
               </div>
             </div>
-
-            {/* Info tiles */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
               {[
-                { icon: "✉️", label: "Email Us",   val: "reserve@aurum.in",    sub: "Replies within 2 hours" },
-                { icon: "📍", label: "Visit Us",   val: "Malabar Hill, Mumbai", sub: "Open daily from 11 AM" },
-                { icon: "📱", label: "WhatsApp",   val: "+91 98765 43210",      sub: "Quick responses always" },
-                { icon: "🍷", label: "Wine Cellar", val: "Book a Cellar Tour",  sub: "Available Fri & Sat evenings" },
+                { icon: "✉️", label: "Email Us",    val: "reserve@aurum.in",     sub: "Replies within 2 hours" },
+                { icon: "📍", label: "Visit Us",    val: "Malabar Hill, Mumbai", sub: "Open daily from 11 AM" },
+                { icon: "📱", label: "WhatsApp",    val: "+91 98765 43210",       sub: "Quick responses always" },
+                { icon: "🍷", label: "Wine Cellar", val: "Book a Cellar Tour",    sub: "Available Fri & Sat evenings" },
               ].map(({ icon, label, val, sub }) => (
                 <div key={label} className="glass help-stat-card">
                   <p style={{ fontSize: "1.7rem", marginBottom: 14 }}>{icon}</p>
@@ -2189,7 +2280,6 @@ export default function App() {
     <>
       <GlobalStyle />
       <div style={{ minHeight: "100vh", background: T.bg, position: "relative" }}>
-        {/* Live animated background — always visible */}
         <LiveBackground />
 
         <Navbar
@@ -2199,12 +2289,11 @@ export default function App() {
           onCartOpen={() => setCartOpen(true)}
           cartBounceKey={cartBounceKey}
         />
+
         <main style={{ position: "relative", zIndex: 1 }}>
-          <PageComponent
-            setActivePage={navigate}
-            addToCart={addToCart}
-          />
+          <PageComponent setActivePage={navigate} addToCart={addToCart} />
         </main>
+
         <Footer setActivePage={navigate} />
 
         <CartDrawer
@@ -2217,7 +2306,10 @@ export default function App() {
           totalPrice={totalPrice}
         />
 
-        {orderPlaced && <OrderSuccessPopup onClose={() => {}} />}
+        {/* ── AI CHAT WIDGET — always mounted, floats above everything ── */}
+        <AIChatWidget setActivePage={navigate} />
+
+        {orderPlaced && <OrderSuccessPopup />}
         {toast && <div className="toast">{toast}</div>}
       </div>
     </>
