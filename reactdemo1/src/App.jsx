@@ -91,32 +91,67 @@ const TIMELINE = [
   { year: "2022", title: "Third Star Awarded",  desc: "Aurum joins a rarefied group of three-star establishments in Asia." },
 ];
 
-/* ─── FAQ DATA ──────────────────────────────────────────── */
+/* ─── FAQ DATA (10 questions) ───────────────────────────── */
 const FAQS = [
   {
     icon: "◈",
+    category: "Reservations",
     question: "How do I make a reservation at Aurum?",
     answer: "You can reserve a table through our Contact page using the online reservation form, by calling us at +91 22 4001 9999, or by emailing reserve@aurum.in. We recommend booking at least 3–5 days in advance, especially for weekends and special occasions. For the Chef's Table, please enquire at least two weeks ahead.",
   },
   {
     icon: "◇",
+    category: "Dining",
     question: "Does Aurum accommodate dietary requirements and allergies?",
-    answer: "Absolutely. Our kitchen is fully equipped to accommodate a wide range of dietary needs — including vegetarian, vegan, gluten-free, and specific allergen requests. Please mention any requirements in the Special Requests field when reserving, or call us ahead of your visit so Chef Arjun's team can prepare accordingly.",
+    answer: "Absolutely. Our kitchen is fully equipped to accommodate a wide range of dietary needs — including vegetarian, vegan, gluten-free, Jain, and specific allergen requests. Please mention any requirements in the Special Requests field when reserving, or call us ahead of your visit so Chef Arjun's team can prepare accordingly. We take allergen safety with the utmost seriousness.",
   },
   {
     icon: "⬡",
+    category: "Dress Code",
     question: "What is the dress code at Aurum?",
     answer: "Aurum maintains a smart-elegant dress code that honours the refined ambience of the space. We ask guests to avoid casual wear such as shorts, sportswear, and flip-flops. We suggest smart casual to formal attire — think evening wear, tailored separates, or elegant dresses. Our team is happy to advise if you are unsure.",
   },
   {
     icon: "✦",
+    category: "Events",
     question: "Can I host a private event or celebration at Aurum?",
     answer: "Yes — we have two exclusive private dining rooms accommodating up to 40 guests. Whether it is an anniversary, a corporate dinner, a product launch, or a proposal, our events team will craft a bespoke experience tailored to your occasion. Contact events@aurum.in or enquire via our Services page to begin planning.",
   },
   {
     icon: "★",
+    category: "Policy",
     question: "What is your cancellation and modification policy?",
     answer: "We kindly ask for at least 48 hours' notice for cancellations or changes to your reservation. For the Chef's Table or private events, a 72-hour notice is required. Late cancellations may incur a nominal fee. To modify or cancel, please call us directly at +91 22 4001 9999 or email reserve@aurum.in and our team will assist you promptly.",
+  },
+  {
+    icon: "◆",
+    category: "Wine & Beverages",
+    question: "Tell me about your wine programme and cellar.",
+    answer: "Our award-winning cellar houses over 800 labels curated personally by our resident sommelier, Vikram Nair. We offer old and new-world selections spanning France, Italy, Spain, and Argentina, with a dedicated Indian wine section celebrating the best of domestic viticulture. Guests are welcome to arrange a cellar tour before or after dining — please request this at the time of reservation.",
+  },
+  {
+    icon: "⬥",
+    category: "Chef's Table",
+    question: "What is the Chef's Table experience?",
+    answer: "The Chef's Table is Aurum's most intimate offering — a counter seating of just six guests, positioned at the heart of the kitchen. You will witness every dish being assembled live, guided through a 9-course tasting menu by Chef Arjun himself, with sommelier pairings for each course. The Chef's Table runs on Friday and Saturday evenings only, and requires booking a minimum of two weeks in advance. It is an experience unlike any other.",
+  },
+  {
+    icon: "◉",
+    category: "Parking & Access",
+    question: "Is parking available, and how do I reach Aurum?",
+    answer: "Aurum has a dedicated valet parking service available at the entrance on Napean Sea Road. Self-parking is also available in the adjacent tower complex. By public transport, the nearest Metro station is Chowpatty (Line 3), a 7-minute walk away. We also recommend booking a cab directly to our address: 12, Napean Sea Road, Malabar Hill, Mumbai 400 006. Our concierge team can assist with any travel arrangements.",
+  },
+  {
+    icon: "✧",
+    category: "Gift & Vouchers",
+    question: "Do you offer gift vouchers or experience packages?",
+    answer: "Yes — Aurum gift vouchers are available in denominations of ₹2,500 to ₹50,000 and make for extraordinary gifts. Our bespoke Experience Packages include the Romantic Evening Package, the Wine Connoisseur Package, and the Chef's Table for Two. Vouchers can be purchased online, in-person, or by contacting us directly. Validity is 12 months from the date of issue.",
+  },
+  {
+    icon: "◎",
+    category: "Children & Groups",
+    question: "Is Aurum suitable for children, and do you handle large groups?",
+    answer: "Aurum warmly welcomes families with children aged 10 and above, provided they are comfortable in a formal dining setting. We offer a curated children's menu on request. For groups larger than 8 guests, we recommend booking one of our private dining rooms to ensure an intimate and undisturbed experience for your party. Our events coordinator will personally oversee all aspects of group dining to guarantee a seamless evening.",
   },
 ];
 
@@ -226,8 +261,28 @@ const GLOBAL_CSS = `
     50%      { border-color: rgba(184,134,11,0.5); }
   }
   @keyframes faqReveal {
-    from { opacity:0; transform:translateY(10px); }
+    from { opacity:0; transform:translateY(-8px); }
     to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes faqGoldPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(184,134,11,0); }
+    50%     { box-shadow: 0 0 24px 4px rgba(184,134,11,0.12); }
+  }
+  @keyframes faqSlideDown {
+    from { opacity: 0; transform: translateY(-12px) scaleY(0.92); }
+    to   { opacity: 1; transform: translateY(0) scaleY(1); }
+  }
+  @keyframes faqIconSpin {
+    from { transform: rotate(0deg) scale(1); }
+    to   { transform: rotate(360deg) scale(1.15); }
+  }
+  @keyframes categoryPop {
+    from { opacity:0; transform: scale(0.8) translateY(-4px); }
+    to   { opacity:1; transform: scale(1) translateY(0); }
+  }
+  @keyframes progressLine {
+    from { width: 0; }
+    to   { width: 100%; }
   }
 
   .anim-fade-up  { animation: fadeUp  0.75s var(--ease) both; }
@@ -438,20 +493,142 @@ const GLOBAL_CSS = `
   .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; }
   .grid-auto { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:24px; }
 
-  /* FAQ accordion */
-  .faq-answer {
-    overflow: hidden;
-    transition: max-height 0.42s cubic-bezier(0.4,0,0.2,1), opacity 0.35s ease, padding 0.35s ease;
-  }
-  .faq-answer.open {
-    animation: faqReveal 0.38s var(--ease) both;
-  }
+  /* ── FAQ ACCORDION STYLES ── */
   .faq-card {
-    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s var(--ease-spring);
+    border-radius: 20px;
+    border: 1.5px solid rgba(90,80,60,0.12);
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(20px);
+    overflow: hidden;
+    transition:
+      border-color 0.38s cubic-bezier(0.4,0,0.2,1),
+      box-shadow   0.38s cubic-bezier(0.4,0,0.2,1),
+      transform    0.32s cubic-bezier(0.34,1.56,0.64,1),
+      background   0.32s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+  .faq-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(to bottom, transparent, rgba(42,90,60,0.15), transparent);
+    transition: opacity 0.4s, background 0.4s;
+    opacity: 0;
+    border-radius: 0 2px 2px 0;
   }
   .faq-card.active {
-    border-color: rgba(42,90,60,0.3) !important;
-    box-shadow: 0 8px 40px rgba(42,90,60,0.1), 0 1px 0 rgba(255,255,255,0.9) inset !important;
+    border-color: rgba(42,90,60,0.28) !important;
+    background: rgba(255,255,255,0.95) !important;
+    box-shadow:
+      0 8px 48px rgba(42,90,60,0.1),
+      0 2px 0 rgba(255,255,255,0.9) inset !important;
+    transform: translateX(4px);
+    animation: faqGoldPulse 2.5s ease-in-out 1;
+  }
+  .faq-card.active::before {
+    opacity: 1;
+    background: linear-gradient(to bottom, transparent, ${T.green}, transparent);
+  }
+  .faq-card:not(.active):hover {
+    border-color: rgba(42,90,60,0.18);
+    box-shadow: 0 4px 24px rgba(28,26,20,0.08);
+    transform: translateX(2px);
+  }
+
+  .faq-trigger {
+    width: 100%; display: flex; align-items: center;
+    gap: 18px; padding: 26px 28px;
+    text-align: left; background: none; border: none; cursor: pointer;
+    transition: background 0.25s;
+    position: relative;
+  }
+  .faq-trigger:hover { background: rgba(42,90,60,0.02); }
+
+  .faq-icon-badge {
+    width: 46px; height: 46px; border-radius: 13px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem;
+    transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    position: relative; overflow: hidden;
+  }
+  .faq-icon-badge::after {
+    content: '';
+    position: absolute; inset: 0; border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%);
+  }
+
+  .faq-category-tag {
+    font-size: 0.56rem; font-weight: 700; letter-spacing: 0.26em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px; display: inline-block;
+    animation: categoryPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  .faq-question-text {
+    flex: 1; transition: color 0.3s;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(0.95rem, 1.6vw, 1.1rem);
+    font-weight: 600; line-height: 1.45;
+  }
+
+  .faq-chevron-wrap {
+    width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.38s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .faq-chevron {
+    transition: transform 0.42s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .faq-chevron.open { transform: rotate(180deg); }
+
+  /* Answer panel — height animated via JS with CSS transition */
+  .faq-answer-panel {
+    overflow: hidden;
+    transition:
+      max-height 0.48s cubic-bezier(0.4,0,0.2,1),
+      opacity    0.38s cubic-bezier(0.4,0,0.2,1),
+      padding    0.38s cubic-bezier(0.4,0,0.2,1);
+  }
+  .faq-answer-inner {
+    padding: 0 28px 28px 92px;
+    position: relative;
+  }
+  .faq-answer-inner::before {
+    content: '';
+    position: absolute; left: 46px; top: 0; bottom: 28px; width: 1px;
+    background: linear-gradient(to bottom, rgba(42,90,60,0.2), transparent);
+  }
+  .faq-answer-text {
+    font-size: 0.94rem;
+    color: ${T.textDim};
+    line-height: 1.92;
+    font-family: 'Playfair Display', serif;
+    font-weight: 300;
+    padding-top: 4px;
+    animation: faqSlideDown 0.38s cubic-bezier(0.4,0,0.2,1) both;
+  }
+  .faq-divider {
+    height: 1px;
+    background: linear-gradient(to right, rgba(42,90,60,0.12), rgba(184,134,11,0.08), transparent);
+    margin: 0 28px 0 92px;
+    transition: opacity 0.3s;
+  }
+
+  /* Progress indicator strip */
+  .faq-progress-strip {
+    height: 2px;
+    background: linear-gradient(90deg, ${T.green}, ${T.gold});
+    border-radius: 0 0 0 0;
+    animation: progressLine 0.45s cubic-bezier(0.4,0,0.2,1) both;
+    transform-origin: left;
+  }
+
+  /* Help stats bar */
+  .help-stat-card {
+    padding: 32px 28px; border-radius: 18px; text-align: center;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+  }
+  .help-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 44px rgba(28,26,20,0.1);
   }
 
   @media (max-width:1024px) {
@@ -469,10 +646,17 @@ const GLOBAL_CSS = `
     .footer-grid  { grid-template-columns:1fr !important; }
     .chef-grid    { grid-template-columns:1fr !important; }
     .gallery-grid { grid-template-columns:1fr 1fr !important; grid-template-rows:auto !important; }
+    .faq-answer-inner { padding: 0 20px 24px 68px; }
+    .faq-answer-inner::before { left: 34px; }
+    .faq-divider { margin: 0 20px 0 68px; }
+    .faq-trigger { padding: 22px 20px; gap: 14px; }
   }
   @media (max-width:480px) {
     .grid-auto { grid-template-columns:1fr; }
     .gallery-grid { grid-template-columns:1fr !important; }
+    .faq-answer-inner { padding: 0 16px 20px 16px; }
+    .faq-answer-inner::before { display: none; }
+    .faq-divider { margin: 0 16px; }
   }
 `;
 
@@ -484,6 +668,9 @@ function GlobalStyle() {
       s.id = id; s.textContent = GLOBAL_CSS;
       document.head.appendChild(s);
     }
+    // Re-inject on changes (dev)
+    const el = document.getElementById(id);
+    if (el) el.textContent = GLOBAL_CSS;
   }, []);
   return null;
 }
@@ -1567,23 +1754,163 @@ function Contact() {
   );
 }
 
+/* ─── FAQ ACCORDION ITEM ─────────────────────────────────── */
+function FaqItem({ faq, index, isOpen, onToggle }) {
+  const answerRef = useRef(null);
+  const [height, setHeight] = useState(0);
+
+  useEffect(() => {
+    if (answerRef.current) {
+      setHeight(answerRef.current.scrollHeight);
+    }
+  }, [faq.answer]);
+
+  // Category colour palette — cycles through green/gold shades
+  const categoryColors = [
+    { bg: "linear-gradient(135deg, rgba(42,90,60,0.15), rgba(42,90,60,0.06))", border: "rgba(42,90,60,0.22)", icon: T.green },
+    { bg: "linear-gradient(135deg, rgba(184,134,11,0.14), rgba(184,134,11,0.05))", border: "rgba(184,134,11,0.22)", icon: T.gold },
+  ];
+  const palette = categoryColors[index % 2];
+  const activePalette = { bg: "linear-gradient(135deg, rgba(42,90,60,0.18), rgba(42,90,60,0.08))", border: "rgba(42,90,60,0.28)", icon: T.green };
+
+  return (
+    <div
+      className={`faq-card${isOpen ? " active" : ""}`}
+      style={{ animationDelay: `${index * 0.06}s` }}
+    >
+      {/* Progress strip shown when open */}
+      {isOpen && <div className="faq-progress-strip" />}
+
+      {/* Trigger */}
+      <button className="faq-trigger" onClick={() => onToggle(index)} aria-expanded={isOpen}>
+        {/* Icon badge */}
+        <div
+          className="faq-icon-badge"
+          style={{
+            background: isOpen ? activePalette.bg : palette.bg,
+            border: `1.5px solid ${isOpen ? activePalette.border : palette.border}`,
+            color: isOpen ? activePalette.icon : palette.icon,
+            transform: isOpen ? "scale(1.08)" : "scale(1)",
+            boxShadow: isOpen ? `0 4px 18px rgba(42,90,60,0.18)` : "none",
+          }}
+        >
+          {faq.icon}
+        </div>
+
+        {/* Text block */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {/* Category pill */}
+          <span
+            className="faq-category-tag"
+            style={{
+              background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(184,134,11,0.08)",
+              color: isOpen ? T.green : T.gold,
+              border: `1px solid ${isOpen ? "rgba(42,90,60,0.2)" : "rgba(184,134,11,0.18)"}`,
+              marginBottom: 8,
+              display: "inline-block",
+            }}
+          >
+            {faq.category}
+          </span>
+          <p
+            className="faq-question-text"
+            style={{ color: isOpen ? T.green : T.text }}
+          >
+            {faq.question}
+          </p>
+        </div>
+
+        {/* Chevron */}
+        <div
+          className="faq-chevron-wrap"
+          style={{
+            background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(28,26,20,0.05)",
+            border: `1.5px solid ${isOpen ? "rgba(42,90,60,0.22)" : "rgba(28,26,20,0.08)"}`,
+            boxShadow: isOpen ? "0 2px 10px rgba(42,90,60,0.12)" : "none",
+          }}
+        >
+          <svg
+            className={`faq-chevron${isOpen ? " open" : ""}`}
+            width="13" height="13" viewBox="0 0 13 13" fill="none"
+          >
+            <path
+              d="M2.5 4.5L6.5 8.5L10.5 4.5"
+              stroke={isOpen ? T.green : T.textDim}
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+      </button>
+
+      {/* Animated divider */}
+      <div
+        className="faq-divider"
+        style={{ opacity: isOpen ? 1 : 0 }}
+      />
+
+      {/* Answer panel */}
+      <div
+        className="faq-answer-panel"
+        style={{
+          maxHeight: isOpen ? `${height + 56}px` : "0px",
+          opacity: isOpen ? 1 : 0,
+        }}
+      >
+        <div className="faq-answer-inner" ref={answerRef}>
+          <p className="faq-answer-text">
+            {faq.answer}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── HELP PAGE ──────────────────────────────────────────── */
 function HelpPage({ setActivePage }) {
   const [openIdx, setOpenIdx] = useState(null);
 
-  const toggle = (i) => setOpenIdx(prev => (prev === i ? null : i));
+  const handleToggle = useCallback((i) => {
+    setOpenIdx(prev => (prev === i ? null : i));
+  }, []);
+
+  // Split FAQs into two columns for large screens
+  const leftFaqs  = FAQS.filter((_, i) => i % 2 === 0);
+  const rightFaqs = FAQS.filter((_, i) => i % 2 === 1);
 
   return (
     <div style={{ background: T.bg, paddingTop: 76 }}>
 
       {/* ── HERO ── */}
       <section className="section-sm" style={{ position: "relative", overflow: "hidden" }}>
-        <AmbientOrb x="50%" y="-10%" size={700} color={T.green} opacity={0.06} />
-        <AmbientOrb x="10%" y="40%" size={450} color={T.gold} opacity={0.04} />
-        <FloatingParticles count={10} />
+        <AmbientOrb x="55%" y="-10%" size={750} color={T.green} opacity={0.055} />
+        <AmbientOrb x="5%"  y="35%"  size={480} color={T.gold}  opacity={0.04}  />
+        <FloatingParticles count={12} />
+        <SparkleField count={10} />
+
         <div className="container" style={{ textAlign: "center", position: "relative", zIndex: 1 }}>
-          <p className="eyebrow" style={{ marginBottom: 18 }}>Guest Support</p>
-          <h1 className="font-display" style={{ fontSize: "clamp(2.6rem,5.5vw,4.4rem)", fontWeight: 600, color: T.text, lineHeight: 1.1, marginBottom: 22 }}>
+          {/* Decorative top ornament */}
+          <div style={{
+            display: "inline-flex", alignItems: "center", gap: 14,
+            marginBottom: 32,
+          }}>
+            {["◇", "✦", "◈", "✦", "◇"].map((s, i) => (
+              <span key={i} style={{
+                color: i === 2 ? T.green : T.gold,
+                fontSize: i === 2 ? "1.2rem" : "0.7rem",
+                opacity: i === 2 ? 1 : 0.5,
+                animation: `sparkle ${2 + i * 0.4}s ${i * 0.3}s ease-in-out infinite`,
+              }}>{s}</span>
+            ))}
+          </div>
+
+          <p className="eyebrow" style={{ marginBottom: 20 }}>Guest Support</p>
+          <h1 className="font-display" style={{
+            fontSize: "clamp(2.8rem,6vw,5rem)", fontWeight: 600,
+            color: T.text, lineHeight: 1.08, marginBottom: 24,
+          }}>
             How Can We{" "}
             <em style={{
               background: GRAD.goldText, backgroundSize: "300% auto",
@@ -1593,133 +1920,149 @@ function HelpPage({ setActivePage }) {
             }}>Help You?</em>
           </h1>
           <p style={{
-            color: T.textDim, fontSize: "1.08rem", lineHeight: 1.85,
-            maxWidth: 560, margin: "0 auto",
+            color: T.textDim, fontSize: "1.08rem", lineHeight: 1.88,
+            maxWidth: 580, margin: "0 auto 48px",
             fontFamily: "'Playfair Display', serif", fontWeight: 300,
           }}>
             Find answers to the questions our guests ask most often. If you need further assistance, our team is always a call away.
           </p>
+
+          {/* Quick-stat pills */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+            {[
+              { icon: "◈", label: "10 Topics Covered" },
+              { icon: "✦", label: "Instant Answers" },
+              { icon: "◇", label: "Expert Support" },
+            ].map(({ icon, label }) => (
+              <div key={label} style={{
+                display: "inline-flex", alignItems: "center", gap: 9,
+                padding: "9px 20px", borderRadius: 100,
+                background: "rgba(255,255,255,0.65)", backdropFilter: "blur(16px)",
+                border: "1.5px solid rgba(42,90,60,0.15)",
+                fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.14em",
+                textTransform: "uppercase", color: T.textDim,
+              }}>
+                <span style={{ color: T.green, fontSize: "0.85rem" }}>{icon}</span>
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── FAQ ACCORDION ── */}
-      <section className="section" style={{ paddingTop: 20, position: "relative", overflow: "hidden" }}>
-        <AmbientOrb x="80%" y="30%" size={500} color={T.gold} opacity={0.04} />
+      <section className="section" style={{ paddingTop: 24, position: "relative", overflow: "hidden" }}>
+        <AmbientOrb x="85%" y="20%" size={520} color={T.gold}  opacity={0.04} />
+        <AmbientOrb x="-5%" y="60%" size={480} color={T.green} opacity={0.04} />
+
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ maxWidth: 820, margin: "0 auto" }}>
+          <div style={{ maxWidth: 920, margin: "0 auto" }}>
             <SectionHeader
               eyebrow="Frequently Asked"
               title={<>Common <em>Questions</em></>}
-              subtitle="Everything you need to know before your visit to Aurum."
+              subtitle="Everything you need to know before your visit to Aurum — from reservations to our private dining rooms."
             />
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {FAQS.map((faq, i) => {
-                const isOpen = openIdx === i;
-                return (
-                  <div
-                    key={i}
-                    className={`glass faq-card${isOpen ? " active" : ""}`}
-                    style={{ borderRadius: 18, overflow: "hidden" }}
-                  >
-                    {/* Question row */}
-                    <button
-                      onClick={() => toggle(i)}
-                      style={{
-                        width: "100%", display: "flex", alignItems: "center",
-                        gap: 20, padding: "28px 32px", textAlign: "left",
-                        background: "none", border: "none", cursor: "pointer",
-                      }}
-                    >
-                      {/* Icon badge */}
-                      <div style={{
-                        width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                        background: isOpen
-                          ? "linear-gradient(135deg, rgba(42,90,60,0.18), rgba(42,90,60,0.08))"
-                          : "linear-gradient(135deg, rgba(184,134,11,0.12), rgba(184,134,11,0.05))",
-                        border: `1.5px solid ${isOpen ? "rgba(42,90,60,0.25)" : "rgba(184,134,11,0.2)"}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "1rem",
-                        color: isOpen ? T.green : T.gold,
-                        transition: "all 0.35s",
-                      }}>
-                        {faq.icon}
-                      </div>
+            {/* Two-column layout on large screens, single on mobile */}
+            <style>{`
+              @media (min-width: 900px) {
+                .faq-two-col {
+                  display: grid !important;
+                  grid-template-columns: 1fr 1fr;
+                  gap: 0 28px;
+                  align-items: start;
+                }
+              }
+            `}</style>
 
-                      {/* Question text */}
-                      <span className="font-display" style={{
-                        flex: 1, fontSize: "clamp(1rem,1.8vw,1.15rem)", fontWeight: 600,
-                        color: isOpen ? T.green : T.text, lineHeight: 1.4,
-                        transition: "color 0.3s",
-                      }}>
-                        {faq.question}
-                      </span>
-
-                      {/* Chevron */}
-                      <div style={{
-                        width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-                        background: isOpen ? "rgba(42,90,60,0.1)" : "rgba(28,26,20,0.05)",
-                        border: `1.5px solid ${isOpen ? "rgba(42,90,60,0.2)" : "rgba(28,26,20,0.08)"}`,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        transition: "all 0.35s",
-                      }}>
-                        <svg
-                          width="12" height="12" viewBox="0 0 12 12" fill="none"
-                          style={{
-                            transition: "transform 0.35s cubic-bezier(0.4,0,0.2,1)",
-                            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
-                          }}
-                        >
-                          <path d="M2 4L6 8L10 4" stroke={isOpen ? T.green : T.textDim} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </div>
-                    </button>
-
-                    {/* Answer panel */}
-                    <div
-                      className={`faq-answer${isOpen ? " open" : ""}`}
-                      style={{
-                        maxHeight: isOpen ? 300 : 0,
-                        opacity: isOpen ? 1 : 0,
-                        paddingBottom: isOpen ? 28 : 0,
-                      }}
-                    >
-                      <div style={{
-                        padding: "0 32px 0 96px",
-                        borderTop: isOpen ? "1.5px solid rgba(42,90,60,0.1)" : "1.5px solid transparent",
-                        paddingTop: isOpen ? 22 : 0,
-                        transition: "border-color 0.3s, padding-top 0.3s",
-                      }}>
-                        <p style={{
-                          fontSize: "0.95rem", color: T.textDim, lineHeight: 1.88,
-                          fontFamily: "'Playfair Display', serif", fontWeight: 300,
-                        }}>
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="faq-two-col" style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+              {/* Left column */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {leftFaqs.map((faq) => {
+                  const realIdx = FAQS.indexOf(faq);
+                  return (
+                    <FaqItem
+                      key={realIdx}
+                      faq={faq}
+                      index={realIdx}
+                      isOpen={openIdx === realIdx}
+                      onToggle={handleToggle}
+                    />
+                  );
+                })}
+              </div>
+              {/* Right column */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {rightFaqs.map((faq) => {
+                  const realIdx = FAQS.indexOf(faq);
+                  return (
+                    <FaqItem
+                      key={realIdx}
+                      faq={faq}
+                      index={realIdx}
+                      isOpen={openIdx === realIdx}
+                      onToggle={handleToggle}
+                    />
+                  );
+                })}
+              </div>
             </div>
+
+            {/* Collapse-all button when one is open */}
+            {openIdx !== null && (
+              <div style={{ textAlign: "center", marginTop: 36, animation: "fadeUp 0.3s ease both" }}>
+                <button
+                  onClick={() => setOpenIdx(null)}
+                  style={{
+                    fontSize: "0.68rem", fontWeight: 600, letterSpacing: "0.2em",
+                    textTransform: "uppercase", color: T.textMuted,
+                    display: "inline-flex", alignItems: "center", gap: 8,
+                    padding: "10px 22px", borderRadius: 10,
+                    border: "1.5px solid rgba(28,26,20,0.1)",
+                    background: "rgba(255,255,255,0.5)",
+                    transition: "all 0.25s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = T.text; e.currentTarget.style.borderColor = "rgba(28,26,20,0.2)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = T.textMuted; e.currentTarget.style.borderColor = "rgba(28,26,20,0.1)"; }}
+                >
+                  ↑ Collapse all
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* ── STILL NEED HELP ── */}
       <section className="section" style={{ paddingTop: 0, position: "relative", overflow: "hidden", background: T.bgLayer }}>
-        <AmbientOrb x="40%" y="20%" size={600} color={T.green} opacity={0.05} />
+        <AmbientOrb x="40%" y="15%" size={620} color={T.green} opacity={0.05} />
         <div className="container" style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ maxWidth: 820, margin: "0 auto" }}>
+          <div style={{ maxWidth: 920, margin: "0 auto" }}>
+
+            {/* Main CTA card */}
             <div className="glass" style={{
-              borderRadius: 24, padding: "60px clamp(32px,5vw,72px)",
+              borderRadius: 28, padding: "56px clamp(32px,5vw,72px)",
               display: "flex", alignItems: "center", justifyContent: "space-between",
               flexWrap: "wrap", gap: 36,
+              background: "rgba(255,255,255,0.82)",
+              boxShadow: "0 12px 60px rgba(42,90,60,0.08), 0 1px 0 rgba(255,255,255,0.9) inset",
+              marginBottom: 20,
+              position: "relative", overflow: "hidden",
             }}>
+              {/* Decorative corner ornament */}
+              <div style={{
+                position: "absolute", top: -30, right: -30, width: 160, height: 160,
+                borderRadius: "50%", background: "radial-gradient(circle, rgba(184,134,11,0.08), transparent 70%)",
+                pointerEvents: "none",
+              }} />
+
               <div>
-                <p className="eyebrow" style={{ marginBottom: 14 }}>Still Have Questions?</p>
-                <h2 className="font-display" style={{ fontSize: "clamp(1.6rem,3vw,2.2rem)", fontWeight: 600, color: T.text, marginBottom: 14, lineHeight: 1.2 }}>
-                  Our team is<br />
+                <p className="eyebrow" style={{ marginBottom: 16 }}>Still Have Questions?</p>
+                <h2 className="font-display" style={{
+                  fontSize: "clamp(1.7rem,3vw,2.4rem)", fontWeight: 600,
+                  color: T.text, marginBottom: 16, lineHeight: 1.2,
+                }}>
+                  Our team is{" "}
                   <em style={{
                     background: GRAD.goldText, backgroundSize: "300% auto",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -1727,44 +2070,49 @@ function HelpPage({ setActivePage }) {
                     animation: "shimmer 5s linear infinite", display: "inline-block",
                   }}>always here.</em>
                 </h2>
-                <p style={{ fontSize: "0.92rem", color: T.textDim, lineHeight: 1.78, maxWidth: 380, fontFamily: "'Playfair Display', serif", fontWeight: 300 }}>
+                <p style={{
+                  fontSize: "0.94rem", color: T.textDim, lineHeight: 1.82,
+                  maxWidth: 400, fontFamily: "'Playfair Display', serif", fontWeight: 300,
+                }}>
                   Reach out via phone, email, or visit us directly. We are happy to assist with reservations, dietary enquiries, or anything else you need.
                 </p>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 14, flexShrink: 0 }}>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 13, flexShrink: 0 }}>
                 <button onClick={() => setActivePage("Contact")} className="btn-primary">
-                  Make a Reservation
+                  Make a Reservation ✦
                 </button>
                 <a
                   href="tel:+912240019999"
                   style={{
                     display: "inline-flex", alignItems: "center", justifyContent: "center",
                     gap: 10, padding: "14px 30px", borderRadius: 12,
-                    border: "1.5px solid rgba(28,26,20,0.2)", background: "rgba(255,255,255,0.5)",
+                    border: "1.5px solid rgba(28,26,20,0.18)", background: "rgba(255,255,255,0.55)",
                     color: T.text, fontSize: "0.76rem", fontWeight: 500,
-                    letterSpacing: "0.15em", textTransform: "uppercase", textDecoration: "none",
+                    letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none",
                     transition: "all 0.25s",
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.background = "rgba(42,90,60,0.08)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(28,26,20,0.2)"; e.currentTarget.style.background = "rgba(255,255,255,0.5)"; }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = T.green; e.currentTarget.style.background = "rgba(42,90,60,0.08)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(28,26,20,0.18)"; e.currentTarget.style.background = "rgba(255,255,255,0.55)"; e.currentTarget.style.transform = ""; }}
                 >
-                  📞 Call +91 22 4001 9999
+                  📞 +91 22 4001 9999
                 </a>
               </div>
             </div>
 
-            {/* Quick-link info cards */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", gap: 16, marginTop: 20 }}>
+            {/* Info tiles */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16 }}>
               {[
-                { icon: "✉️", label: "Email Us", val: "reserve@aurum.in", sub: "Typically replies within 2 hours" },
-                { icon: "📍", label: "Visit Us", val: "Malabar Hill, Mumbai", sub: "Open daily from 11 AM" },
-                { icon: "📱", label: "WhatsApp", val: "+91 98765 43210", sub: "Quick responses on WhatsApp" },
+                { icon: "✉️", label: "Email Us",   val: "reserve@aurum.in",    sub: "Replies within 2 hours" },
+                { icon: "📍", label: "Visit Us",   val: "Malabar Hill, Mumbai", sub: "Open daily from 11 AM" },
+                { icon: "📱", label: "WhatsApp",   val: "+91 98765 43210",      sub: "Quick responses always" },
+                { icon: "🍷", label: "Wine Cellar", val: "Book a Cellar Tour",  sub: "Available Fri & Sat evenings" },
               ].map(({ icon, label, val, sub }) => (
-                <div key={label} className="glass glass-lift" style={{ padding: "28px 24px", borderRadius: 16, textAlign: "center" }}>
-                  <p style={{ fontSize: "1.6rem", marginBottom: 12 }}>{icon}</p>
-                  <p style={{ fontSize: "0.63rem", letterSpacing: "0.22em", textTransform: "uppercase", color: T.textMuted, marginBottom: 8 }}>{label}</p>
-                  <p style={{ fontSize: "0.9rem", fontWeight: 600, color: T.text, marginBottom: 5 }}>{val}</p>
-                  <p style={{ fontSize: "0.75rem", color: T.textMuted, lineHeight: 1.6 }}>{sub}</p>
+                <div key={label} className="glass help-stat-card">
+                  <p style={{ fontSize: "1.7rem", marginBottom: 14 }}>{icon}</p>
+                  <p style={{ fontSize: "0.6rem", letterSpacing: "0.24em", textTransform: "uppercase", color: T.textMuted, marginBottom: 8 }}>{label}</p>
+                  <p style={{ fontSize: "0.88rem", fontWeight: 600, color: T.text, marginBottom: 5 }}>{val}</p>
+                  <p style={{ fontSize: "0.73rem", color: T.textMuted, lineHeight: 1.65 }}>{sub}</p>
                 </div>
               ))}
             </div>
@@ -1875,4 +2223,3 @@ export default function App() {
     </>
   );
 }
-// test
